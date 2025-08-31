@@ -929,6 +929,12 @@
             color: var(--success);
             font-weight: bold;
         }
+        .logo img {
+  height: 80px;   /* adjust as needed - try 40px, 60px, etc. */
+  width: auto;    /* keeps proportions */
+  max-width: 100%; /* prevents overflow */
+}
+
     </style>
     </style>
 </head>
@@ -936,10 +942,12 @@
     <!-- Header -->
     <header>
         <div class="container header-content">
-            <div class="logo">
-                <i class="fas fa-shipping-fast"></i>
-                <span>Amexan</span>
-            </div>
+            <!-- Replace your logo section with this: -->
+<div class="logo">
+  <a href="index.html">
+    <img src="images/logo.png" alt="Amexan Logo" />
+  </a>
+</div>
             <button class="mobile-menu-btn" id="mobileMenuBtn">
                 <i class="fas fa-bars"></i>
             </button>

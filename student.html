@@ -72,10 +72,15 @@
             justify-content: space-between;
             align-items: center;
         }
+       .logo img {
+  height: 80px;   /* adjust as needed - try 40px, 60px, etc. */
+  width: auto;    /* keeps proportions */
+  max-width: 100%; /* prevents overflow */
+}
 
         .logo {
             display: flex;
-            align-items: center;
+            align-items: left;
         }
 
         .logo-icon {
@@ -691,10 +696,7 @@
                 text-align: center;
             }
             
-            .logo {
-                margin-bottom: 15px;
-                justify-content: center;
-            }
+            
             
             nav ul {
                 justify-content: center;
@@ -957,12 +959,13 @@
         <i class="fas fa-bars"></i>
       </button>
 
-      <!-- Logo -->
-      <div class="logo flex items-center">
-        <a href="index.html">
-          <img src="images/amexanlogos.png" alt="Amexan Logo" class="h-20 w-20 object-contain">
-        </a>
-      </div>
+      <!-- Replace your logo section with this: -->
+<div class="logo">
+  <a href="index.html">
+    <img src="images/logo.png" alt="Amexan Logo" />
+  </a>
+</div>
+
 
       <!-- Navigation -->
       <nav id="main-nav">
