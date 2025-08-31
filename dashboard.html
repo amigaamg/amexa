@@ -683,16 +683,17 @@
         </div>
     </section>
    <!-- Search Bar (Visible on mobile, hidden on desktops) -->
-<div class="flex md:hidden w-full max-w-lg mx-4">
+<div class="flex md:hidden w-full max-w-xs mx-auto">
     <div class="search-bar flex rounded-lg overflow-hidden shadow-md border border-gray-300 bg-white w-full">
-        <input type="text" id="searchInput" placeholder="Search products..." 
-               class="flex-1 px-4 py-3 text-base border-0 focus:outline-none placeholder-gray-500 text-black" 
+        <input type="text" id="searchInput" placeholder="Search..." 
+               class="flex-1 px-3 py-2 text-sm border-0 focus:outline-none placeholder-gray-500 text-black" 
                onkeyup="searchProducts()" />
-        <button class="text-white px-5 py-3 text-base font-semibold bg-searchBlue hover:bg-blue-700 transition-colors duration-200">
+        <button class="text-white px-4 py-2 text-sm font-semibold bg-searchBlue hover:bg-blue-700 transition-colors duration-200">
             <i class="fas fa-search"></i>
         </button>
     </div>
 </div>
+
 
 
     <!-- Navigation - Desktop -->
@@ -2072,26 +2073,27 @@
             renderOrders();
             renderPagination();
         }
-       // Normalize helper for plural/singular matching
-function normalize(str) {
-  return str.toLowerCase().trim().replace(/s$/, "");
-}
+     
+  // Normalize helper for plural/singular matching
+  function normalize(str) {
+    return str.toLowerCase().trim().replace(/s$/, "");
+  }
 
-// Handle search logic
-window.searchProducts = function () {
-  const query = normalize(document.getElementById("searchInput").value);
-  const productsContainer = document.getElementById("productsContainer");
+  // Handle search logic
+  window.searchProducts = function () {
+    const query = normalize(document.getElementById("searchInput").value);
+    const productsContainer = document.getElementById("productsContainer");
 
-  // Reset container
-  productsContainer.innerHTML = "";
+    // Reset container
+    productsContainer.innerHTML = "";
 
-  let filteredProducts;
+    if (!query) {
+      // If search empty → show all
+      filteredProducts = allProducts;
+      renderProducts(filteredProducts);
+      return;
+    }
 
-  if (!query) {
-    // If search empty → show all
-    filteredProducts = allProducts;
-    renderProducts(filteredProducts);
-  } else {
     // Filter by name or brand
     filteredProducts = allProducts.filter((p) => {
       const name = normalize(p.name || "");
@@ -2101,36 +2103,36 @@ window.searchProducts = function () {
 
     if (filteredProducts.length > 0) {
       renderProducts(filteredProducts);
+      // Scroll to results
+      productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
     } else {
       productsContainer.innerHTML = `
         <div class="col-span-full text-center py-10 px-4 bg-gray-100 rounded-lg">
-          <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-          <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
-          <p class="text-gray-600 italic">
-            "When you feel like quitting, remember why you started – 
-            keep searching, the right product is waiting for you!"
-          </p>
+            <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+            <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
+            <p class="text-gray-600 italic">
+                "When you feel like quitting, remember why you started – 
+                keep searching, the right product is waiting for you!"
+            </p>
         </div>
       `;
+      productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
     }
-  }
+  };
 
-  // ✅ Always scroll to results after search action
-  productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-};
+  // Attach Enter key search
+  document.getElementById("searchInput").addEventListener("keyup", (e) => {
+    if (e.key === "Enter") {
+      searchProducts();
+    }
+  });
 
-// ✅ Attach Enter key (only triggers on Enter)
-document.getElementById("searchInput").addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    e.preventDefault(); // stop form submit if inside a form
+  // Attach button click search
+  document.querySelector(".search-bar button").addEventListener("click", () => {
     searchProducts();
-  }
-});
+  });
 
-// ✅ Attach button click
-document.querySelector(".search-bar button").addEventListener("click", () => {
-  searchProducts();
-});
+
 
     </script>
 </body>
