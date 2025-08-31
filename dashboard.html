@@ -682,6 +682,17 @@
             </div>
         </div>
     </section>
+    <!-- Search Bar -->
+            <div class="hidden md:flex w-full max-w-lg mx-8">
+                <div class="search-bar flex rounded-lg overflow-hidden shadow-md border border-gray-300 bg-white w-full">
+                    <input type="text" id="searchInput" placeholder="Search products..." 
+                           class="flex-1 px-4 py-3 text-base border-0 focus:outline-none placeholder-gray-500 text-black" 
+                           onkeyup="searchProducts()" />
+                    <button class="text-white px-5 py-3 text-base font-semibold bg-searchBlue hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
 
     <!-- Navigation - Desktop -->
     <nav class="bg-white py-4 px-4 md:px-12 border-b sticky top-0 z-50 desktop-nav">
@@ -870,7 +881,7 @@
     Orders
 </a>
 <a href="user" class="mobile-menu-btn">
-    <i class="fas fa-users"></i> <i class="fas fa-truck"></i>Group Shipping
+    <i class="fas fa-users"></i>Group Shipping
 </a>
 
         <button class="mobile-menu-btn" onclick="showSection('profile')">
@@ -2077,6 +2088,9 @@ window.searchProducts = function () {
         // If search empty → show all
         filteredProducts = allProducts;
         renderProducts(filteredProducts);
+
+        // Scroll down to results
+        productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
         return;
     }
 
@@ -2101,6 +2115,9 @@ window.searchProducts = function () {
             </div>
         `;
     }
+
+    // Scroll down to results
+    productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 // Attach Enter key search
@@ -2113,7 +2130,6 @@ document.getElementById("searchInput").addEventListener("keyup", (e) => {
 // Attach button click search
 document.querySelector(".search-bar button").addEventListener("click", () => {
     searchProducts();
-
 });
 
     </script>
