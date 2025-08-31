@@ -2072,193 +2072,234 @@
             renderOrders();
             renderPagination();
         }
-       // Normalize helper for plural/singular matching
-        function normalize(str) {
-            return str.toLowerCase().trim().replace(/s$/, "");
+       // ================== SEARCH FUNCTIONALITY ==================
+
+// Normalize helper for plural/singular matching
+function normalize(str) {
+    return str.toLowerCase().trim().replace(/s$/, "");
+}
+
+// Handle search logic - works with your existing renderProducts() function
+window.searchProducts = function(inputElement) {
+    // Get the correct input element
+    let searchInput;
+    if (inputElement) {
+        searchInput = inputElement;
+    } else {
+        // Try to get from desktop first, then mobile
+        const desktopInput = document.querySelector('.hidden.md\\:flex input[placeholder*="Search"]');
+        const mobileInput = document.querySelector('.flex.md\\:hidden input[placeholder*="Search"]');
+        searchInput = desktopInput || mobileInput || document.getElementById('searchInput');
+    }
+    
+    if (!searchInput) {
+        console.error('Search input not found');
+        return;
+    }
+    
+    const query = normalize(searchInput.value);
+    const productsContainer = document.getElementById("productsContainer");
+    
+    // Show loading if products container exists
+    if (productsContainer) {
+        productsContainer.innerHTML = '<div class="loader col-span-full mx-auto"></div>';
+    }
+    
+    let searchResults;
+    
+    if (!query) {
+        // If search empty → show all products (respecting current category filter)
+        if (currentCategory === 'all') {
+            filteredProducts = [...allProducts];
+        } else {
+            // Re-apply current category filter
+            const category = categories.find(cat => cat.id === currentCategory);
+            if (category) {
+                filteredProducts = allProducts.filter(product => {
+                    const productCategory = product.category || '';
+                    return category.firebaseCategories.some(fbCategory => 
+                        productCategory.toLowerCase().includes(fbCategory.toLowerCase())
+                    );
+                });
+            }
         }
-        
-        // Render products function
-        function renderProducts(products) {
-            const container = document.getElementById("productsContainer");
-            const resultsCount = document.getElementById("resultsCount");
-            
-            if (products.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full text-center py-10 px-4 bg-gray-100 rounded-lg fade-in">
-                        <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-                        <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
-                        <p class="text-gray-600 italic">
-                            "When you feel like quitting, remember why you started – 
-                            keep searching, the right product is waiting for you!"
-                        </p>
-                    </div>
-                `;
-                resultsCount.textContent = "";
-                return;
-            }
-            
-            resultsCount.textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
-            
-            container.innerHTML = products.map(product => `
-                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 fade-in">
-                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
-                    <div class="p-4">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.name}</h3>
-                        <p class="text-sm text-gray-600 mb-2">${product.brand}</p>
-                        <p class="text-sm text-gray-500 mb-3">${product.category}</p>
-                        <div class="flex items-center justify-between">
-                            <span class="text-xl font-bold text-blue-600">$${product.price}</span>
-                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
-                                Add to Cart
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-        
-        // Handle search logic
-        function searchProducts(inputElement, immediate = false) {
-            const query = normalize(inputElement.value);
-            const productsContainer = document.getElementById("productsContainer");
-            const searchStatus = document.getElementById("searchStatus");
-            const searchStatusText = document.getElementById("searchStatusText");
-            
-            // If immediate search (button click), clear typing timer
-            if (immediate) {
-                clearTimeout(typingTimer);
-                isTyping = false;
-                inputElement.classList.remove('search-typing');
-            }
-            
-            // Reset container
-            productsContainer.innerHTML = "";
-            
-            if (!query) {
-                // If search empty → show all
-                filteredProducts = allProducts;
-                renderProducts(filteredProducts);
-                searchStatus.classList.add('hidden');
-                return;
-            }
-            
-            // Show search status
-            searchStatus.classList.remove('hidden');
-            searchStatusText.textContent = `Searching for "${inputElement.value}"...`;
-            
-            // Filter by name or brand
-            filteredProducts = allProducts.filter((p) => {
-                const name = normalize(p.name || "");
-                const brand = normalize(p.brand || "");
-                const category = normalize(p.category || "");
-                return name.includes(query) || brand.includes(query) || category.includes(query);
-            });
-            
-            // Update search status
-            if (filteredProducts.length > 0) {
-                searchStatusText.textContent = `Found ${filteredProducts.length} result${filteredProducts.length !== 1 ? 's' : ''} for "${inputElement.value}"`;
+        searchResults = filteredProducts;
+    } else {
+        // Filter by name, brand, or category within current category filter
+        let productsToSearch;
+        if (currentCategory === 'all') {
+            productsToSearch = allProducts;
+        } else {
+            const category = categories.find(cat => cat.id === currentCategory);
+            if (category) {
+                productsToSearch = allProducts.filter(product => {
+                    const productCategory = product.category || '';
+                    return category.firebaseCategories.some(fbCategory => 
+                        productCategory.toLowerCase().includes(fbCategory.toLowerCase())
+                    );
+                });
             } else {
-                searchStatusText.textContent = `No results found for "${inputElement.value}"`;
-            }
-            
-            renderProducts(filteredProducts);
-            
-            // Scroll to results if search was triggered by button click
-            if (immediate) {
-                setTimeout(() => {
-                    document.getElementById('productsSection').scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }, 100);
+                productsToSearch = allProducts;
             }
         }
         
-        // Sync search inputs
-        function syncSearchInputs(activeInput, targetInput) {
-            targetInput.value = activeInput.value;
-        }
+        searchResults = productsToSearch.filter((p) => {
+            const name = normalize(p.name || "");
+            const brand = normalize(p.brand || "");
+            const category = normalize(p.category || "");
+            return name.includes(query) || brand.includes(query) || category.includes(query);
+        });
         
-        // Setup search functionality
-        function setupSearch() {
-            const desktopInput = document.getElementById('desktopSearchInput');
-            const mobileInput = document.getElementById('mobileSearchInput');
-            const desktopBtn = document.getElementById('desktopSearchBtn');
-            const mobileBtn = document.getElementById('mobileSearchBtn');
-            
-            // Desktop input events
-            desktopInput.addEventListener('keyup', (e) => {
-                syncSearchInputs(desktopInput, mobileInput);
-                
-                // Add typing indicator
-                desktopInput.classList.add('search-typing');
-                clearTimeout(typingTimer);
-                isTyping = true;
-                
-                // Remove typing indicator after 1 second of no typing
-                typingTimer = setTimeout(() => {
-                    desktopInput.classList.remove('search-typing');
-                    isTyping = false;
-                }, 1000);
-                
-                // Search on Enter key
-                if (e.key === 'Enter') {
-                    searchProducts(desktopInput, true);
-                }
-            });
-            
-            // Mobile input events  
-            mobileInput.addEventListener('keyup', (e) => {
-                syncSearchInputs(mobileInput, desktopInput);
-                
-                // Add typing indicator
-                mobileInput.classList.add('search-typing');
-                clearTimeout(typingTimer);
-                isTyping = true;
-                
-                // Remove typing indicator after 1 second of no typing
-                typingTimer = setTimeout(() => {
-                    mobileInput.classList.remove('search-typing');
-                    isTyping = false;
-                }, 1000);
-                
-                // Search on Enter key
-                if (e.key === 'Enter') {
-                    searchProducts(mobileInput, true);
-                }
-            });
-            
-            // Button click events
-            desktopBtn.addEventListener('click', () => {
-                desktopBtn.classList.add('pulse-search');
-                searchProducts(desktopInput, true);
-                setTimeout(() => {
-                    desktopBtn.classList.remove('pulse-search');
-                }, 500);
-            });
-            
-            mobileBtn.addEventListener('click', () => {
-                mobileBtn.classList.add('pulse-search');
-                searchProducts(mobileInput, true);
-                setTimeout(() => {
-                    mobileBtn.classList.remove('pulse-search');
-                }, 500);
-            });
+        filteredProducts = searchResults;
+    }
+    
+    // Use your existing renderProducts function or create custom display
+    if (typeof renderProducts === 'function') {
+        renderProducts();
+    } else {
+        // Fallback rendering if renderProducts doesn't exist
+        renderSearchResults(searchResults, query, inputElement.value);
+    }
+    
+    // Sync both search inputs
+    syncSearchInputs(searchInput);
+    
+    // Scroll to results after search
+    setTimeout(() => {
+        const targetElement = document.getElementById('productsContainer') || document.getElementById('shopSection');
+        if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-        
-        // Initialize the application
-        function init() {
-            // Render initial products
-            renderProducts(filteredProducts);
-            
-            // Setup search functionality
-            setupSearch();
-            
-            console.log('Dual search system initialized successfully!');
+    }, 300);
+};
+
+// Sync search inputs between desktop and mobile
+function syncSearchInputs(activeInput) {
+    const desktopInput = document.querySelector('.hidden.md\\:flex input[placeholder*="Search"]');
+    const mobileInput = document.querySelector('.flex.md\\:hidden input[placeholder*="Search"]');
+    const fallbackInput = document.getElementById('searchInput');
+    
+    const allInputs = [desktopInput, mobileInput, fallbackInput].filter(Boolean);
+    
+    allInputs.forEach(input => {
+        if (input !== activeInput && input.value !== activeInput.value) {
+            input.value = activeInput.value;
         }
+    });
+}
+
+// Fallback render function if your renderProducts doesn't exist
+function renderSearchResults(results, query, originalQuery) {
+    const productsContainer = document.getElementById("productsContainer");
+    if (!productsContainer) return;
+    
+    if (results.length === 0 && query) {
+        productsContainer.innerHTML = `
+            <div class="col-span-full text-center py-10 px-4 bg-gray-100 rounded-lg">
+                <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
+                <p class="text-gray-600 mb-2">No results for "${originalQuery}"</p>
+                <p class="text-gray-600 italic">
+                    "When you feel like quitting, remember why you started – 
+                    keep searching, the right product is waiting for you!"
+                </p>
+            </div>
+        `;
+        return;
+    }
+    
+    // If renderProducts function doesn't exist, you'll need to implement product card rendering here
+    console.log(`Found ${results.length} products for query: ${originalQuery}`);
+}
+
+// Setup search event listeners
+function setupSearchListeners() {
+    // Desktop search input
+    const desktopInput = document.querySelector('.hidden.md\\:flex input[placeholder*="Search"]');
+    const desktopBtn = document.querySelector('.hidden.md\\:flex button');
+    
+    // Mobile search input  
+    const mobileInput = document.querySelector('.flex.md\\:hidden input[placeholder*="Search"]');
+    const mobileBtn = document.querySelector('.flex.md\\:hidden button');
+    
+    // Fallback search input (if using old ID)
+    const fallbackInput = document.getElementById('searchInput');
+    const fallbackBtn = document.querySelector('.search-bar button');
+    
+    // Desktop events
+    if (desktopInput) {
+        desktopInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchProducts(desktopInput);
+            }
+        });
         
-        // Start the application when DOM is ready
-        document.addEventListener('DOMContentLoaded', init);
+        // Optional: Add typing sync without triggering search
+        desktopInput.addEventListener('input', (e) => {
+            syncSearchInputs(desktopInput);
+        });
+    }
+    
+    if (desktopBtn) {
+        desktopBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchProducts(desktopInput);
+        });
+    }
+    
+    // Mobile events
+    if (mobileInput) {
+        mobileInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchProducts(mobileInput);
+            }
+        });
+        
+        // Optional: Add typing sync without triggering search
+        mobileInput.addEventListener('input', (e) => {
+            syncSearchInputs(mobileInput);
+        });
+    }
+    
+    if (mobileBtn) {
+        mobileBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchProducts(mobileInput);
+        });
+    }
+    
+    // Fallback events (for backward compatibility)
+    if (fallbackInput) {
+        fallbackInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                searchProducts(fallbackInput);
+            }
+        });
+    }
+    
+    if (fallbackBtn) {
+        fallbackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            searchProducts(fallbackInput || desktopInput || mobileInput);
+        });
+    }
+}
+
+// Initialize search functionality after DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Wait a bit for your existing code to initialize
+    setTimeout(() => {
+        setupSearchListeners();
+        console.log('Search functionality initialized');
+    }, 1000);
+});
+
+// Export functions for global access
+window.searchProducts = searchProducts;
+window.setupSearchListeners = setupSearchListeners;
 
     </script>
 </body>
