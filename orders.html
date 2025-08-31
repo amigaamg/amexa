@@ -509,52 +509,56 @@
 <body>
     
     <!-- Navbar -->
-    <header class="glass-effect sticky top-0 z-40 border-b border-white/20">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <div class="flex items-center">
-                    <a href="index.html" class="text-2xl font-bold text-primary flex items-center">
-                        <i class="fas fa-heartbeat mr-2"></i>
-                        Amexan
-                    </a>
-                </div>
-                
-                <nav class="hidden md:flex space-x-8">
-                    <a href="dashboard.html" class="text-gray-600 hover:text-primary transition-colors font-medium">Home</a>
-                    <a href="dashboard.html" class="text-gray-600 hover:text-primary transition-colors font-medium">Products</a>
-                    <a href="cart.html" class="text-gray-600 hover:text-primary transition-colors font-medium">Cart</a>
-                    <a href="orders.html" class="text-primary font-semibold border-b-2 border-primary">My Orders</a>
-                </nav>
-                
-                <div class="flex items-center space-x-4">
-    <div id="authButtons" class="auth-hidden">
-        <a href="login.html" class="btn-primary">
-            <i class="fas fa-sign-in-alt"></i> Login
+<header class="sticky top-0 z-40 border-b border-white/20 bg-[#0000cd]">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="index.html" class="flex items-center">
+          <img src="images/logo.png" alt="Amexan Logo" class="h-10 w-auto" />
         </a>
-    </div>
-</div>
+      </div>
 
-                    
-                    <div id="userMenu" class="auth-required flex items-center space-x-4">
-                        <div class="flex items-center space-x-2">
-                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                <i class="fas fa-user text-white text-sm"></i>
-                            </div>
-                            <span id="userEmail" class="text-gray-700 font-medium text-sm"></span>
-                        </div>
-                        <button onclick="logoutUser()" class="text-red-600 hover:text-red-800 font-medium transition-colors">
-                            <i class="fas fa-sign-out-alt mr-1"></i> Logout
-                        </button>
-                    </div>
-                    
-                    <button class="md:hidden text-gray-600">
-                       
-                        
-                    </button>
-                </div>
-            </div>
+      <!-- Navigation (Desktop) -->
+      <nav class="hidden md:flex space-x-8">
+        <a href="dashboard.html" class="text-white hover:text-gray-200 transition-colors font-medium">Home</a>
+        <a href="dashboard.html" class="text-white hover:text-gray-200 transition-colors font-medium">Products</a>
+        <a href="cart.html" class="text-white hover:text-gray-200 transition-colors font-medium">Cart</a>
+        <a href="orders.html" class="text-yellow-300 font-semibold border-b-2 border-yellow-300">My Orders</a>
+      </nav>
+
+      <!-- Auth Buttons / User Menu -->
+      <div class="flex items-center space-x-4">
+        
+        <!-- Shown if not logged in -->
+        <div id="authButtons" class="auth-hidden">
+          <a href="login.html" class="bg-white text-[#0000cd] px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </a>
         </div>
-    </header>
+
+        <!-- Shown if logged in -->
+        <div id="userMenu" class="auth-required hidden flex items-center space-x-4">
+          <div class="flex items-center space-x-2">
+            <div class="w-8 h-8 bg-white rounded-full flex items-center justify-center">
+              <i class="fas fa-user text-[#0000cd] text-sm"></i>
+            </div>
+            <span id="userEmail" class="text-white font-medium text-sm"></span>
+          </div>
+          <button onclick="logoutUser()" class="text-red-200 hover:text-white font-medium transition-colors">
+            <i class="fas fa-sign-out-alt mr-1"></i> Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Menu Button -->
+      <button class="md:hidden text-white">
+        <i class="fas fa-bars text-xl"></i>
+      </button>
+    </div>
+  </div>
+</header>
 
     <!-- Auth Required Message -->
     <div id="authMessage" class="auth-hidden min-h-screen flex items-center justify-center">
