@@ -2074,64 +2074,193 @@
             renderPagination();
         }
      
-  // Normalize helper for plural/singular matching
-  function normalize(str) {
-    return str.toLowerCase().trim().replace(/s$/, "");
-  }
-
-  // Handle search logic
-  window.searchProducts = function () {
-    const query = normalize(document.getElementById("searchInput").value);
-    const productsContainer = document.getElementById("productsContainer");
-
-    // Reset container
-    productsContainer.innerHTML = "";
-
-    if (!query) {
-      // If search empty → show all
-      filteredProducts = allProducts;
-      renderProducts(filteredProducts);
-      return;
-    }
-
-    // Filter by name or brand
-    filteredProducts = allProducts.filter((p) => {
-      const name = normalize(p.name || "");
-      const brand = normalize(p.brand || "");
-      return name.includes(query) || brand.includes(query);
-    });
-
-    if (filteredProducts.length > 0) {
-      renderProducts(filteredProducts);
-      // Scroll to results
-      productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-    } else {
-      productsContainer.innerHTML = `
-        <div class="col-span-full text-center py-10 px-4 bg-gray-100 rounded-lg">
-            <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
-            <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
-            <p class="text-gray-600 italic">
-                "When you feel like quitting, remember why you started – 
-                keep searching, the right product is waiting for you!"
-            </p>
-        </div>
-      `;
-      productsContainer.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
-  // Attach Enter key search
-  document.getElementById("searchInput").addEventListener("keyup", (e) => {
-    if (e.key === "Enter") {
-      searchProducts();
-    }
-  });
-
-  // Attach button click search
-  document.querySelector(".search-bar button").addEventListener("click", () => {
-    searchProducts();
-  });
-
+// Normalize helper for plural/singular matching
+        function normalize(str) {
+            return str.toLowerCase().trim().replace(/s$/, "");
+        }
+        
+        // Render products function
+        function renderProducts(products) {
+            const container = document.getElementById("productsContainer");
+            const resultsCount = document.getElementById("resultsCount");
+            
+            if (products.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-10 px-4 bg-gray-100 rounded-lg fade-in">
+                        <i class="fas fa-search text-4xl text-gray-400 mb-4"></i>
+                        <h3 class="text-xl font-bold text-gray-700 mb-2">No products found</h3>
+                        <p class="text-gray-600 italic">
+                            "When you feel like quitting, remember why you started – 
+                            keep searching, the right product is waiting for you!"
+                        </p>
+                    </div>
+                `;
+                resultsCount.textContent = "";
+                return;
+            }
+            
+            resultsCount.textContent = `${products.length} product${products.length !== 1 ? 's' : ''} found`;
+            
+            container.innerHTML = products.map(product => `
+                <div class="product-card bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200 fade-in">
+                    <img src="${product.image}" alt="${product.name}" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.name}</h3>
+                        <p class="text-sm text-gray-600 mb-2">${product.brand}</p>
+                        <p class="text-sm text-gray-500 mb-3">${product.category}</p>
+                        <div class="flex items-center justify-between">
+                            <span class="text-xl font-bold text-blue-600">$${product.price}</span>
+                            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors duration-200">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Handle search logic
+        function searchProducts(inputElement, immediate = false) {
+            const query = normalize(inputElement.value);
+            const productsContainer = document.getElementById("productsContainer");
+            const searchStatus = document.getElementById("searchStatus");
+            const searchStatusText = document.getElementById("searchStatusText");
+            
+            // If immediate search (button click), clear typing timer
+            if (immediate) {
+                clearTimeout(typingTimer);
+                isTyping = false;
+                inputElement.classList.remove('search-typing');
+            }
+            
+            // Reset container
+            productsContainer.innerHTML = "";
+            
+            if (!query) {
+                // If search empty → show all
+                filteredProducts = allProducts;
+                renderProducts(filteredProducts);
+                searchStatus.classList.add('hidden');
+                return;
+            }
+            
+            // Show search status
+            searchStatus.classList.remove('hidden');
+            searchStatusText.textContent = `Searching for "${inputElement.value}"...`;
+            
+            // Filter by name or brand
+            filteredProducts = allProducts.filter((p) => {
+                const name = normalize(p.name || "");
+                const brand = normalize(p.brand || "");
+                const category = normalize(p.category || "");
+                return name.includes(query) || brand.includes(query) || category.includes(query);
+            });
+            
+            // Update search status
+            if (filteredProducts.length > 0) {
+                searchStatusText.textContent = `Found ${filteredProducts.length} result${filteredProducts.length !== 1 ? 's' : ''} for "${inputElement.value}"`;
+            } else {
+                searchStatusText.textContent = `No results found for "${inputElement.value}"`;
+            }
+            
+            renderProducts(filteredProducts);
+            
+            // Scroll to results if search was triggered by button click
+            if (immediate) {
+                setTimeout(() => {
+                    document.getElementById('productsSection').scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
+        }
+        
+        // Sync search inputs
+        function syncSearchInputs(activeInput, targetInput) {
+            targetInput.value = activeInput.value;
+        }
+        
+        // Setup search functionality
+        function setupSearch() {
+            const desktopInput = document.getElementById('desktopSearchInput');
+            const mobileInput = document.getElementById('mobileSearchInput');
+            const desktopBtn = document.getElementById('desktopSearchBtn');
+            const mobileBtn = document.getElementById('mobileSearchBtn');
+            
+            // Desktop input events
+            desktopInput.addEventListener('keyup', (e) => {
+                syncSearchInputs(desktopInput, mobileInput);
+                
+                // Add typing indicator
+                desktopInput.classList.add('search-typing');
+                clearTimeout(typingTimer);
+                isTyping = true;
+                
+                // Remove typing indicator after 1 second of no typing
+                typingTimer = setTimeout(() => {
+                    desktopInput.classList.remove('search-typing');
+                    isTyping = false;
+                }, 1000);
+                
+                // Search on Enter key
+                if (e.key === 'Enter') {
+                    searchProducts(desktopInput, true);
+                }
+            });
+            
+            // Mobile input events  
+            mobileInput.addEventListener('keyup', (e) => {
+                syncSearchInputs(mobileInput, desktopInput);
+                
+                // Add typing indicator
+                mobileInput.classList.add('search-typing');
+                clearTimeout(typingTimer);
+                isTyping = true;
+                
+                // Remove typing indicator after 1 second of no typing
+                typingTimer = setTimeout(() => {
+                    mobileInput.classList.remove('search-typing');
+                    isTyping = false;
+                }, 1000);
+                
+                // Search on Enter key
+                if (e.key === 'Enter') {
+                    searchProducts(mobileInput, true);
+                }
+            });
+            
+            // Button click events
+            desktopBtn.addEventListener('click', () => {
+                desktopBtn.classList.add('pulse-search');
+                searchProducts(desktopInput, true);
+                setTimeout(() => {
+                    desktopBtn.classList.remove('pulse-search');
+                }, 500);
+            });
+            
+            mobileBtn.addEventListener('click', () => {
+                mobileBtn.classList.add('pulse-search');
+                searchProducts(mobileInput, true);
+                setTimeout(() => {
+                    mobileBtn.classList.remove('pulse-search');
+                }, 500);
+            });
+        }
+        
+        // Initialize the application
+        function init() {
+            // Render initial products
+            renderProducts(filteredProducts);
+            
+            // Setup search functionality
+            setupSearch();
+            
+            console.log('Dual search system initialized successfully!');
+        }
+        
+        // Start the application when DOM is ready
+        document.addEventListener('DOMContentLoaded', init);
 
 
     </script>

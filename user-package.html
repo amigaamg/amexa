@@ -190,29 +190,6 @@
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
         }
         
-        .package-image {
-            height: 220px;
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #f8f9fa;
-        }
-        
-        .image-carousel {
-            display: flex;
-            transition: transform 0.5s ease;
-            height: 100%;
-            width: 100%;
-        }
-        
-        .carousel-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            padding: 10px;
-        }
         
         .carousel-nav {
             position: absolute;
@@ -1344,240 +1321,396 @@
             packageListeners[packageId] = unsubscribe;
         }
 
-        // Create package card HTML
-        function createPackageCard(packageData) {
-            const card = document.createElement('div');
-            card.className = 'package-card fade-in';
-            card.setAttribute('data-package-id', packageData.id);
+      // Create package card HTML 
+function createPackageCard(packageData) {
+    const card = document.createElement('div');
+    card.className = 'package-card fade-in';
+    card.setAttribute('data-package-id', packageData.id);
+    
+    // Get images or placeholder - optimize for mobile
+    const images = packageData.images && packageData.images.length > 0 
+        ? packageData.images 
+        : ['https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+    
+    // Preload first image for faster display
+    if (images.length > 0) {
+        const preloadImg = new Image();
+        preloadImg.src = images[0];
+    }
+    
+    // Get default quantity option
+    const defaultQtyOption = packageData.quantityOptions && packageData.quantityOptions.length > 0 
+        ? packageData.quantityOptions[0] 
+        : { quantity: 1, price: packageData.discountedPrice || 0 };
+    
+    // Calculate days left for group order
+    let daysLeft = 5;
+    if (packageData.groupOrderEndDate) {
+        const endDate = packageData.groupOrderEndDate.toDate ? 
+            packageData.groupOrderEndDate.toDate() : 
+            new Date(packageData.groupOrderEndDate);
+        daysLeft = Math.max(0, Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)));
+    }
+    
+    // Store package data for progress calculation
+    card.dataset.packageData = JSON.stringify({
+        quantityOptions: packageData.quantityOptions || [defaultQtyOption],
+        orderCounts: packageData.orderCounts || {}
+    });
+    
+    card.innerHTML = `
+        <div class="package-image">
+            <div class="image-carousel">
+                ${images.map((img, index) => `<img src="${img}" class="carousel-image ${index === 0 ? 'active' : ''}" alt="${packageData.name}" loading="${index === 0 ? 'eager' : 'lazy'}" style="object-fit: cover; width: 100%; height: 100%;">`).join('')}
+            </div>
+            ${images.length > 1 ? `
+                <div class="carousel-nav">
+                    ${images.map((_, index) => `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`).join('')}
+                </div>
+                <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+            ` : ''}
+            <div class="package-badge">${packageData.type === 'abroad' ? 'Abroad' : 'Local'}</div>
+        </div>
+        <div class="package-content">
+            <h3 class="package-title">${packageData.name}</h3>
+            <div class="package-desc">${packageData.description || 'Premium products at unbeatable prices'}</div>
             
-            // Get images or placeholder
-            const images = packageData.images && packageData.images.length > 0 
-                ? packageData.images 
-                : ['https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80'];
+            <div class="pricing">
+                <span class="original-price">KSh ${packageData.originalPrice || 0}</span>
+                <span class="discounted-price">KSh ${defaultQtyOption.price || 0}</span>
+                <span class="save-badge">Save KSh ${((packageData.originalPrice || 0) - (defaultQtyOption.price || 0)).toFixed(2)}</span>
+            </div>
             
-            // Get default quantity option
-            const defaultQtyOption = packageData.quantityOptions && packageData.quantityOptions.length > 0 
-                ? packageData.quantityOptions[0] 
-                : { quantity: 1, price: packageData.discountedPrice || 0 };
+            <div class="quantity-options">
+                ${createQuantityOptionsHTML(packageData)}
+            </div>
             
-            // Calculate days left for group order
-            let daysLeft = 5;
-            if (packageData.groupOrderEndDate) {
-                const endDate = packageData.groupOrderEndDate.toDate ? 
-                    packageData.groupOrderEndDate.toDate() : 
-                    new Date(packageData.groupOrderEndDate);
-                daysLeft = Math.max(0, Math.ceil((endDate - new Date()) / (1000 * 60 * 60 * 24)));
+            <div class="group-order-info">
+                <p>Group order ends in: ${daysLeft} day${daysLeft !== 1 ? 's' : ''}</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%;"></div>
+                </div>
+                <p class="group-info-text">Loading progress...</p>
+            </div>
+            
+            <div class="trust-badges">
+                <div class="badge"><i class="fas fa-shield-alt" title="Verified"></i></div>
+                <div class="badge"><i class="fas fa-check-circle" title="Quality Assurance"></i></div>
+                <div class="badge"><i class="fas fa-truck" title="Fast Shipping"></i></div>
+                <div class="badge"><i class="fas fa-headset" title="24/7 Support"></i></div>
+            </div>
+            
+            ${packageData.review ? `
+                <div class="review">
+                    "${packageData.review}"
+                    <div class="review-author">- ${packageData.reviewAuthor || 'Satisfied Customer'}</div>
+                </div>
+            ` : ''}
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <span class="timeline-days">${packageData.procurementDays || 4} days</span>
+                    <span>Procurement from supplier</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-days">${packageData.shippingDaysMin || 10}-${packageData.shippingDaysMax || 14} days</span>
+                    <span>International shipping</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-days">${packageData.deliveryDays || 3} days</span>
+                    <span>Delivery & confirmation</span>
+                </div>
+            </div>
+            
+            <div class="package-actions">
+                <button class="btn btn-outline" onclick="showPackageDetails('${packageData.id}')">
+                    <i class="fas fa-question-circle"></i> Details
+                </button>
+                <button class="btn btn-primary" onclick="openPaymentModal('${packageData.id}')">
+                    <i class="fas fa-shopping-cart"></i> Order Now
+                </button>
+            </div>
+        </div>
+    `;
+    
+    // Update progress for default selection
+    setTimeout(() => {
+        updatePackageProgress(card, defaultQtyOption.quantity);
+        updateQuantityOptionsDisplay(card, packageData.orderCounts || {});
+    }, 100);
+    
+    return card;
+}
+
+// Create quantity options HTML
+function createQuantityOptionsHTML(packageData) {
+    if (!packageData.quantityOptions) {
+        const ordersPlaced = (packageData.orderCounts && packageData.orderCounts['qty_1']) || 0;
+        const isComplete = ordersPlaced >= 1;
+        const completedClass = isComplete ? 'completed' : '';
+        
+        return `
+            <div class="qty-option active ${completedClass}" data-qty="1" data-price="${packageData.discountedPrice || 0}" onclick="updatePackageSelection(this, '${packageData.id}')">
+                <div>1 unit ${isComplete ? '✓' : ''}</div>
+                <div>KSh ${packageData.discountedPrice || 0}</div>
+                ${isComplete ? '<div class="completed-label">Complete</div>' : ''}
+            </div>
+        `;
+    }
+    
+    return packageData.quantityOptions.map((option, index) => {
+        const ordersPlaced = (packageData.orderCounts && packageData.orderCounts[`qty_${option.quantity}`]) || 0;
+        const isComplete = ordersPlaced >= option.quantity;
+        const completedClass = isComplete ? 'completed' : '';
+        
+        return `
+            <div class="qty-option ${index === 0 ? 'active' : ''} ${completedClass}" 
+                 data-qty="${option.quantity}" 
+                 data-price="${option.price}"
+                 onclick="${isComplete ? '' : `updatePackageSelection(this, '${packageData.id}')`}">
+                <div>${option.quantity} units ${isComplete ? '✓' : ''}</div>
+                <div>KSh ${option.price}</div>
+                ${isComplete ? '<div class="completed-label">Complete</div>' : ''}
+            </div>
+        `;
+    }).join('');
+}
+
+// Update quantity options display
+function updateQuantityOptionsDisplay(card, orderCounts) {
+    const options = card.querySelectorAll('.qty-option');
+    options.forEach(option => {
+        const qty = parseInt(option.getAttribute('data-qty'));
+        const ordersPlaced = orderCounts[`qty_${qty}`] || 0;
+        const isComplete = ordersPlaced >= qty;
+        
+        if (isComplete) {
+            option.classList.add('completed');
+            option.onclick = null;
+            
+            const unitText = option.querySelector('div:first-child');
+            if (unitText) {
+                unitText.textContent = `${qty} units ✓`;
             }
             
-            // Store package data for progress calculation
-            card.dataset.packageData = JSON.stringify({
-                quantityOptions: packageData.quantityOptions || [defaultQtyOption],
-                orderCounts: packageData.orderCounts || {}
-            });
+            if (!option.querySelector('.completed-label')) {
+                const completedLabel = document.createElement('div');
+                completedLabel.className = 'completed-label';
+                completedLabel.textContent = 'Complete';
+                option.appendChild(completedLabel);
+            }
+        } else {
+            option.classList.remove('completed');
+            option.onclick = function() {
+                updatePackageSelection(this, card.getAttribute('data-package-id'));
+            };
             
-            card.innerHTML = `
-                <div class="package-image">
-                    <div class="image-carousel">
-                        ${images.map(img => `<img src="${img}" class="carousel-image" alt="${packageData.name}" loading="lazy">`).join('')}
-                    </div>
-                    ${images.length > 1 ? `
-                        <div class="carousel-nav">
-                            ${images.map((_, index) => `<div class="carousel-dot ${index === 0 ? 'active' : ''}" data-index="${index}"></div>`).join('')}
-                        </div>
-                        <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
-                        <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
-                    ` : ''}
-                    <div class="package-badge">${packageData.type === 'abroad' ? 'Abroad' : 'Local'}</div>
-                </div>
-                <div class="package-content">
-                    <h3 class="package-title">${packageData.name}</h3>
-                    <div class="package-desc">${packageData.description || 'Premium products at unbeatable prices'}</div>
-                    
-                    <div class="pricing">
-                        <span class="original-price">KSh ${packageData.originalPrice || 0}</span>
-                        <span class="discounted-price">KSh ${defaultQtyOption.price || 0}</span>
-                        <span class="save-badge">Save KSh ${((packageData.originalPrice || 0) - (defaultQtyOption.price || 0)).toFixed(2)}</span>
-                    </div>
-                    
-                    <div class="quantity-options">
-                        ${createQuantityOptionsHTML(packageData)}
-                    </div>
-                    
-                    <div class="group-order-info">
-                        <p>Group order ends in: ${daysLeft} day${daysLeft !== 1 ? 's' : ''}</p>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 0%;"></div>
-                        </div>
-                        <p class="group-info-text">Loading progress...</p>
-                    </div>
-                    
-                    <div class="trust-badges">
-                        <div class="badge"><i class="fas fa-shield-alt" title="Verified"></i></div>
-                        <div class="badge"><i class="fas fa-check-circle" title="Quality Assurance"></i></div>
-                        <div class="badge"><i class="fas fa-truck" title="Fast Shipping"></i></div>
-                        <div class="badge"><i class="fas fa-headset" title="24/7 Support"></i></div>
-                    </div>
-                    
-                    ${packageData.review ? `
-                        <div class="review">
-                            "${packageData.review}"
-                            <div class="review-author">- ${packageData.reviewAuthor || 'Satisfied Customer'}</div>
-                        </div>
-                    ` : ''}
-                    
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <span class="timeline-days">${packageData.procurementDays || 4} days</span>
-                            <span>Procurement from supplier</span>
-                        </div>
-                        <div class="timeline-item">
-                            <span class="timeline-days">${packageData.shippingDaysMin || 10}-${packageData.shippingDaysMax || 14} days</span>
-                            <span>International shipping</span>
-                        </div>
-                        <div class="timeline-item">
-                            <span class="timeline-days">${packageData.deliveryDays || 3} days</span>
-                            <span>Delivery & confirmation</span>
-                        </div>
-                    </div>
-                    
-                    <div class="package-actions">
-                        <button class="btn btn-outline" onclick="showPackageDetails('${packageData.id}')">
-                            <i class="fas fa-question-circle"></i> Details
-                        </button>
-                        <button class="btn btn-primary" onclick="openPaymentModal('${packageData.id}')">
-                            <i class="fas fa-shopping-cart"></i> Order Now
-                        </button>
-                    </div>
-                </div>
-            `;
-            
-            // Update progress for default selection
-            setTimeout(() => {
-                updatePackageProgress(card, defaultQtyOption.quantity);
-                updateQuantityOptionsDisplay(card, packageData.orderCounts || {});
-            }, 100);
-            
-            return card;
-        }
-
-        // Create quantity options HTML
-        function createQuantityOptionsHTML(packageData) {
-            if (!packageData.quantityOptions) {
-                const ordersPlaced = (packageData.orderCounts && packageData.orderCounts['qty_1']) || 0;
-                const isComplete = ordersPlaced >= 1;
-                const completedClass = isComplete ? 'completed' : '';
-                
-                return `
-                    <div class="qty-option active ${completedClass}" data-qty="1" data-price="${packageData.discountedPrice || 0}" onclick="updatePackageSelection(this, '${packageData.id}')">
-                        <div>1 unit ${isComplete ? '✓' : ''}</div>
-                        <div>KSh ${packageData.discountedPrice || 0}</div>
-                        ${isComplete ? '<div class="completed-label">Complete</div>' : ''}
-                    </div>
-                `;
+            const unitText = option.querySelector('div:first-child');
+            if (unitText) {
+                unitText.textContent = `${qty} units`;
             }
             
-            return packageData.quantityOptions.map((option, index) => {
-                const ordersPlaced = (packageData.orderCounts && packageData.orderCounts[`qty_${option.quantity}`]) || 0;
-                const isComplete = ordersPlaced >= option.quantity;
-                const completedClass = isComplete ? 'completed' : '';
-                
-                return `
-                    <div class="qty-option ${index === 0 ? 'active' : ''} ${completedClass}" 
-                         data-qty="${option.quantity}" 
-                         data-price="${option.price}"
-                         onclick="${isComplete ? '' : `updatePackageSelection(this, '${packageData.id}')`}">
-                        <div>${option.quantity} units ${isComplete ? '✓' : ''}</div>
-                        <div>KSh ${option.price}</div>
-                        ${isComplete ? '<div class="completed-label">Complete</div>' : ''}
-                    </div>
-                `;
-            }).join('');
+            const completedLabel = option.querySelector('.completed-label');
+            if (completedLabel) {
+                completedLabel.remove();
+            }
         }
+    });
+}
 
-        // Update quantity options display
-        function updateQuantityOptionsDisplay(card, orderCounts) {
-            const options = card.querySelectorAll('.qty-option');
-            options.forEach(option => {
-                const qty = parseInt(option.getAttribute('data-qty'));
-                const ordersPlaced = orderCounts[`qty_${qty}`] || 0;
-                const isComplete = ordersPlaced >= qty;
-                
-                if (isComplete) {
-                    option.classList.add('completed');
-                    option.onclick = null; // Remove click handler
-                    
-                    const unitText = option.querySelector('div:first-child');
-                    if (unitText) {
-                        unitText.textContent = `${qty} units ✓`;
-                    }
-                    
-                    if (!option.querySelector('.completed-label')) {
-                        const completedLabel = document.createElement('div');
-                        completedLabel.className = 'completed-label';
-                        completedLabel.textContent = 'Complete';
-                        option.appendChild(completedLabel);
-                    }
+// Initialize image carousels
+function initImageCarousels() {
+    document.querySelectorAll('.package-image').forEach(container => {
+        const carousel = container.querySelector('.image-carousel');
+        const dots = container.querySelectorAll('.carousel-dot');
+        const prevBtn = container.querySelector('.carousel-btn.prev');
+        const nextBtn = container.querySelector('.carousel-btn.next');
+        
+        if (!dots.length || !prevBtn || !nextBtn) return;
+        
+        let currentIndex = 0;
+        const images = carousel.querySelectorAll('.carousel-image');
+        const totalImages = images.length;
+        let isTransitioning = false;
+        
+        // Preload next images for smooth transitions
+        function preloadNextImages(currentIdx) {
+            const nextIdx = (currentIdx + 1) % totalImages;
+            const prevIdx = (currentIdx - 1 + totalImages) % totalImages;
+            
+            if (images[nextIdx] && !images[nextIdx].complete) {
+                images[nextIdx].loading = 'eager';
+            }
+            if (images[prevIdx] && !images[prevIdx].complete) {
+                images[prevIdx].loading = 'eager';
+            }
+        }
+        
+        function showImage(index) {
+            if (isTransitioning) return;
+            if (index < 0) index = totalImages - 1;
+            if (index >= totalImages) index = 0;
+            
+            isTransitioning = true;
+            carousel.style.transition = 'transform 0.3s ease';
+            carousel.style.transform = `translateX(-${index * 100}%)`;
+            
+            dots.forEach(dot => dot.classList.remove('active'));
+            dots[index].classList.add('active');
+            
+            currentIndex = index;
+            preloadNextImages(index);
+            
+            setTimeout(() => { isTransitioning = false; }, 300);
+        }
+        
+        // Touch support for mobile
+        let startX = 0;
+        let currentX = 0;
+        let isDragging = false;
+        
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            isDragging = true;
+            carousel.style.transition = 'none';
+        });
+        
+        carousel.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            currentX = e.touches[0].clientX;
+            const deltaX = currentX - startX;
+            const currentTransform = -currentIndex * 100;
+            const newTransform = currentTransform + (deltaX / carousel.offsetWidth) * 100;
+            carousel.style.transform = `translateX(${newTransform}%)`;
+        });
+        
+        carousel.addEventListener('touchend', () => {
+            if (!isDragging) return;
+            isDragging = false;
+            
+            const deltaX = currentX - startX;
+            const threshold = carousel.offsetWidth * 0.2;
+            
+            if (Math.abs(deltaX) > threshold) {
+                if (deltaX > 0) {
+                    showImage(currentIndex - 1);
                 } else {
-                    option.classList.remove('completed');
-                    option.onclick = function() {
-                        updatePackageSelection(this, card.getAttribute('data-package-id'));
-                    };
-                    
-                    const unitText = option.querySelector('div:first-child');
-                    if (unitText) {
-                        unitText.textContent = `${qty} units`;
-                    }
-                    
-                    const completedLabel = option.querySelector('.completed-label');
-                    if (completedLabel) {
-                        completedLabel.remove();
-                    }
+                    showImage(currentIndex + 1);
                 }
-            });
-        }
+            } else {
+                showImage(currentIndex);
+            }
+        });
+        
+        prevBtn.addEventListener('click', () => showImage(currentIndex - 1));
+        nextBtn.addEventListener('click', () => showImage(currentIndex + 1));
+        
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => showImage(index));
+        });
+        
+        let carouselInterval = setInterval(() => showImage(currentIndex + 1), 4000);
+        
+        container.addEventListener('mouseenter', () => clearInterval(carouselInterval));
+        container.addEventListener('mouseleave', () => {
+            carouselInterval = setInterval(() => showImage(currentIndex + 1), 4000);
+        });
+        
+        preloadNextImages(0);
+    });
+}
 
-        // Initialize image carousels
-        function initImageCarousels() {
-            document.querySelectorAll('.package-image').forEach(container => {
-                const carousel = container.querySelector('.image-carousel');
-                const dots = container.querySelectorAll('.carousel-dot');
-                const prevBtn = container.querySelector('.carousel-btn.prev');
-                const nextBtn = container.querySelector('.carousel-btn.next');
-                
-                if (!dots.length || !prevBtn || !nextBtn) return;
-                
-                let currentIndex = 0;
-                const images = carousel.querySelectorAll('.carousel-image');
-                const totalImages = images.length;
-                
-                function showImage(index) {
-                    if (index < 0) index = totalImages - 1;
-                    if (index >= totalImages) index = 0;
-                    
-                    carousel.style.transform = `translateX(-${index * 100}%)`;
-                    
-                    dots.forEach(dot => dot.classList.remove('active'));
-                    dots[index].classList.add('active');
-                    
-                    currentIndex = index;
-                }
-                
-                prevBtn.addEventListener('click', () => showImage(currentIndex - 1));
-                nextBtn.addEventListener('click', () => showImage(currentIndex + 1));
-                
-                dots.forEach((dot, index) => {
-                    dot.addEventListener('click', () => showImage(index));
-                });
-                
-                let carouselInterval = setInterval(() => showImage(currentIndex + 1), 5000);
-                
-                container.addEventListener('mouseenter', () => clearInterval(carouselInterval));
-                container.addEventListener('mouseleave', () => {
-                    carouselInterval = setInterval(() => showImage(currentIndex + 1), 5000);
-                });
-            });
-        }
+// Mobile-optimized CSS for package images
+const mobileImageCSS = `
+.package-image {
+    position: relative;
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+}
 
+.image-carousel {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.3s ease;
+}
+
+.carousel-image {
+    flex: 0 0 100%;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 2;
+    transition: background 0.2s ease;
+}
+
+.carousel-btn.prev { left: 10px; }
+.carousel-btn.next { right: 10px; }
+.carousel-btn:hover { background: rgba(0,0,0,0.8); }
+
+.carousel-nav {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 2;
+}
+
+.carousel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-dot.active {
+    background: white;
+    transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+    .carousel-btn {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+    }
+}
+`;
+
+// Add the CSS to the page
+if (!document.getElementById('mobile-image-styles')) {
+    const style = document.createElement('style');
+    style.id = 'mobile-image-styles';
+    style.textContent = mobileImageCSS;
+    document.head.appendChild(style);
+}
         // Update package selection and progress
         function updatePackageSelection(element, packageId) {
             const card = document.querySelector(`.package-card[data-package-id="${packageId}"]`);
