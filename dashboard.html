@@ -683,16 +683,17 @@
         </div>
     </section>
    <!-- Search Bar (Visible on mobile, hidden on desktops) -->
-<div class="flex md:hidden w-full max-w-lg mx-4">
+<div class="flex md:hidden w-full max-w-xs mx-auto">
     <div class="search-bar flex rounded-lg overflow-hidden shadow-md border border-gray-300 bg-white w-full">
-        <input type="text" id="searchInput" placeholder="Search products..." 
-               class="flex-1 px-4 py-3 text-base border-0 focus:outline-none placeholder-gray-500 text-black" 
+        <input type="text" id="searchInput" placeholder="Search..." 
+               class="flex-1 px-3 py-2 text-sm border-0 focus:outline-none placeholder-gray-500 text-black" 
                onkeyup="searchProducts()" />
-        <button class="text-white px-5 py-3 text-base font-semibold bg-searchBlue hover:bg-blue-700 transition-colors duration-200">
+        <button class="text-white px-4 py-2 text-sm font-semibold bg-searchBlue hover:bg-blue-700 transition-colors duration-200">
             <i class="fas fa-search"></i>
         </button>
     </div>
 </div>
+
 
 
     <!-- Navigation - Desktop -->
@@ -2074,6 +2075,8 @@
         }
        // ================== SEARCH FUNCTIONALITY ==================
 
+// ================== SEARCH FUNCTIONALITY ==================
+
 // Normalize helper for plural/singular matching
 function normalize(str) {
     return str.toLowerCase().trim().replace(/s$/, "");
@@ -2163,15 +2166,20 @@ window.searchProducts = function(inputElement) {
     
     // Sync both search inputs
     syncSearchInputs(searchInput);
-    
-    // Scroll to results after search
-    setTimeout(() => {
-        const targetElement = document.getElementById('productsContainer') || document.getElementById('shopSection');
-        if (targetElement) {
-            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
-        }
-    }, 300);
+
+    // 🚫 Removed auto-scroll from here
 };
+
+// Helper: run search + then scroll
+function triggerSearchAndScroll(inputEl) {
+    searchProducts(inputEl);
+    const targetElement = document.getElementById('productsContainer') || document.getElementById('shopSection');
+    if (targetElement) {
+        setTimeout(() => {
+            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 300);
+    }
+}
 
 // Sync search inputs between desktop and mobile
 function syncSearchInputs(activeInput) {
@@ -2208,7 +2216,6 @@ function renderSearchResults(results, query, originalQuery) {
         return;
     }
     
-    // If renderProducts function doesn't exist, you'll need to implement product card rendering here
     console.log(`Found ${results.length} products for query: ${originalQuery}`);
 }
 
@@ -2231,20 +2238,17 @@ function setupSearchListeners() {
         desktopInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                searchProducts(desktopInput);
+                triggerSearchAndScroll(desktopInput);
             }
         });
-        
-        // Optional: Add typing sync without triggering search
         desktopInput.addEventListener('input', (e) => {
-            syncSearchInputs(desktopInput);
+            syncSearchInputs(desktopInput); // typing only, no scroll
         });
     }
-    
     if (desktopBtn) {
         desktopBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            searchProducts(desktopInput);
+            triggerSearchAndScroll(desktopInput);
         });
     }
     
@@ -2253,44 +2257,39 @@ function setupSearchListeners() {
         mobileInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                searchProducts(mobileInput);
+                triggerSearchAndScroll(mobileInput);
             }
         });
-        
-        // Optional: Add typing sync without triggering search
         mobileInput.addEventListener('input', (e) => {
-            syncSearchInputs(mobileInput);
+            syncSearchInputs(mobileInput); // typing only, no scroll
         });
     }
-    
     if (mobileBtn) {
         mobileBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            searchProducts(mobileInput);
+            triggerSearchAndScroll(mobileInput);
         });
     }
     
-    // Fallback events (for backward compatibility)
+    // Fallback events
     if (fallbackInput) {
         fallbackInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                searchProducts(fallbackInput);
+                triggerSearchAndScroll(fallbackInput);
             }
         });
     }
-    
     if (fallbackBtn) {
         fallbackBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            searchProducts(fallbackInput || desktopInput || mobileInput);
+            triggerSearchAndScroll(fallbackInput || desktopInput || mobileInput);
         });
     }
 }
 
 // Initialize search functionality after DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    // Wait a bit for your existing code to initialize
     setTimeout(() => {
         setupSearchListeners();
         console.log('Search functionality initialized');
@@ -2300,6 +2299,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // Export functions for global access
 window.searchProducts = searchProducts;
 window.setupSearchListeners = setupSearchListeners;
+window.triggerSearchAndScroll = triggerSearchAndScroll;
+
 
     </script>
 </body>
