@@ -503,262 +503,6 @@
   }
 }
 </style>
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            font-size: 11px;
-            line-height: 1.3;
-            color: #000;
-            background: white;
-            padding: 10px;
-        }
-
-        .receipt-container {
-            max-width: 650px;
-            margin: 0 auto;
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-        }
-
-        /* Header */
-        .header-section {
-            text-align: center;
-            border-bottom: 2px solid #0000cd;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-        }
-
-        .company-title {
-            font-size: 20px;
-            font-weight: bold;
-            color: #0000cd;
-            margin-bottom: 8px;
-            letter-spacing: 1px;
-        }
-
-        .logo-container {
-            margin: 5px 0;
-        }
-
-        .logo-img {
-            width: 40px;
-            height: 40px;
-            object-fit: contain;
-        }
-
-        .contact-info {
-            font-size: 10px;
-            margin-top: 5px;
-            line-height: 1.4;
-        }
-
-        .tagline {
-            font-style: italic;
-            color: #666;
-            margin-top: 3px;
-        }
-
-        /* Details Section */
-        .details-section {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            gap: 20px;
-        }
-
-        .order-details, .customer-details {
-            flex: 1;
-            background: #f9f9f9;
-            padding: 8px;
-            border-radius: 3px;
-        }
-
-        .section-title {
-            font-size: 12px;
-            font-weight: bold;
-            margin-bottom: 6px;
-            color: #333;
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 2px;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 3px;
-            font-size: 10px;
-        }
-
-        .detail-label {
-            font-weight: bold;
-            color: #555;
-        }
-
-        .detail-value {
-            text-align: right;
-            max-width: 60%;
-            word-wrap: break-word;
-        }
-
-        .status-completed {
-            color: #0000cd;
-            font-weight: bold;
-        }
-
-        /* Order Table */
-        .order-section {
-            margin-bottom: 12px;
-        }
-
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 10px;
-            margin-top: 5px;
-        }
-
-        .order-table th,
-        .order-table td {
-            border: 1px solid #ddd;
-            padding: 4px 6px;
-            text-align: center;
-        }
-
-        .order-table th {
-            background: #f5f5f5;
-            font-weight: bold;
-            font-size: 10px;
-        }
-
-        .order-table td:first-child,
-        .order-table th:first-child {
-            text-align: left;
-            max-width: 150px;
-            word-wrap: break-word;
-        }
-
-        .item-row:nth-child(even) {
-            background: #fafafa;
-        }
-
-        /* Summary Section */
-        .summary-section {
-            margin-top: 12px;
-        }
-
-        .totals-container {
-            float: right;
-            width: 200px;
-            margin-bottom: 15px;
-        }
-
-        .totals-table {
-            width: 100%;
-            font-size: 11px;
-        }
-
-        .totals-table td {
-            padding: 3px 8px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .totals-table td:first-child {
-            font-weight: bold;
-        }
-
-        .totals-table td:last-child {
-            text-align: right;
-            font-weight: bold;
-        }
-
-        .total-row {
-            border-top: 2px solid #0000cd !important;
-            font-weight: bold !important;
-        }
-
-        .total-row td {
-            font-size: 12px;
-            color: #0000cd;
-            padding: 5px 8px !important;
-        }
-
-        /* Bottom Section */
-        .bottom-section {
-            clear: both;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin: 15px 0 10px 0;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
-        }
-
-        .stamp-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .stamp-img {
-            width: 35px;
-            height: 35px;
-            object-fit: contain;
-        }
-
-        .stamp-date {
-            font-size: 9px;
-            color: #666;
-        }
-
-        .signoff {
-            text-align: right;
-            font-size: 10px;
-        }
-
-        .signoff-text {
-            color: #666;
-            margin-bottom: 2px;
-        }
-
-        .signoff-name {
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* Thank you message */
-        .thank-you {
-            text-align: center;
-            font-size: 10px;
-            color: #0000cd;
-            font-weight: bold;
-            padding: 8px;
-            background: #f8f8ff;
-            border-radius: 3px;
-            margin-top: 10px;
-            line-height: 1.4;
-        }
-
-        /* Responsive adjustments for PDF */
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-            }
-            
-            .receipt-container {
-                border: none;
-                padding: 10px;
-                max-width: 100%;
-            }
-        }
-    </style>
 
     </style>
 </head>
@@ -1244,7 +988,9 @@
         // Base64 encoded images for logo and stamp
        
         
-       async function downloadReceipt(orderDocId, orderId) {
+     // Replace your existing downloadReceipt and generateReceiptHTML functions with these optimized versions
+
+async function downloadReceipt(orderDocId, orderId) {
     showNotification(`Generating detailed receipt for order ${orderId}...`, 'info');
     
     try {
@@ -1255,40 +1001,94 @@
         if (orderDoc.exists()) {
             const orderData = { id: orderDoc.id, ...orderDoc.data() };
             
-            // Create a temporary container for PDF generation
+            // Create a temporary container for PDF generation with optimized styles
             const element = document.createElement('div');
-            element.style.width = '750px'; // Reduced from 800px
-            element.style.padding = '20px';
-            element.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
-            element.style.color = '#2c3e50';
+            element.style.cssText = `
+                width: 650px;
+                padding: 15px;
+                font-family: 'Arial', sans-serif;
+                font-size: 11px;
+                line-height: 1.3;
+                color: #000;
+                background: white;
+            `;
             
-            // Generate the receipt HTML with proper structure
-            element.innerHTML = generateReceiptHTML(orderData);
+            // Add the compact CSS styles directly to the element
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                .receipt-container { max-width: 650px; margin: 0 auto; background: white; border: 1px solid #ddd; padding: 15px; }
+                .header-section { text-align: center; border-bottom: 2px solid #0000cd; padding-bottom: 10px; margin-bottom: 12px; }
+                .company-title { font-size: 20px; font-weight: bold; color: #0000cd; margin-bottom: 8px; letter-spacing: 1px; }
+                .logo-container { margin: 5px 0; }
+                .logo-img { width: 40px; height: 40px; object-fit: contain; }
+                .contact-info { font-size: 10px; margin-top: 5px; line-height: 1.4; }
+                .tagline { font-style: italic; color: #666; margin-top: 3px; }
+                .details-section { display: flex; justify-content: space-between; margin-bottom: 12px; gap: 20px; }
+                .order-details, .customer-details { flex: 1; background: #f9f9f9; padding: 8px; border-radius: 3px; }
+                .section-title { font-size: 12px; font-weight: bold; margin-bottom: 6px; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 2px; }
+                .detail-row { display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 10px; }
+                .detail-label { font-weight: bold; color: #555; }
+                .detail-value { text-align: right; max-width: 60%; word-wrap: break-word; }
+                .status-completed { color: #0000cd; font-weight: bold; }
+                .order-section { margin-bottom: 12px; }
+                .order-table { width: 100%; border-collapse: collapse; font-size: 10px; margin-top: 5px; }
+                .order-table th, .order-table td { border: 1px solid #ddd; padding: 4px 6px; text-align: center; }
+                .order-table th { background: #f5f5f5; font-weight: bold; font-size: 10px; }
+                .order-table td:first-child, .order-table th:first-child { text-align: left; max-width: 150px; word-wrap: break-word; }
+                .item-row:nth-child(even) { background: #fafafa; }
+                .summary-section { margin-top: 12px; }
+                .totals-container { float: right; width: 200px; margin-bottom: 15px; }
+                .totals-table { width: 100%; font-size: 11px; }
+                .totals-table td { padding: 3px 8px; border-bottom: 1px solid #eee; }
+                .totals-table td:first-child { font-weight: bold; }
+                .totals-table td:last-child { text-align: right; font-weight: bold; }
+                .total-row { border-top: 2px solid #0000cd !important; font-weight: bold !important; }
+                .total-row td { font-size: 12px; color: #0000cd; padding: 5px 8px !important; }
+                .bottom-section { clear: both; display: flex; justify-content: space-between; align-items: center; margin: 15px 0 10px 0; padding-top: 10px; border-top: 1px solid #eee; }
+                .stamp-container { display: flex; align-items: center; gap: 8px; }
+                .stamp-img { width: 35px; height: 35px; object-fit: contain; }
+                .stamp-date { font-size: 9px; color: #666; }
+                .signoff { text-align: right; font-size: 10px; }
+                .signoff-text { color: #666; margin-bottom: 2px; }
+                .signoff-name { font-weight: bold; color: #333; }
+                .thank-you { text-align: center; font-size: 10px; color: #0000cd; font-weight: bold; padding: 8px; background: #f8f8ff; border-radius: 3px; margin-top: 10px; line-height: 1.4; }
+                @media print { body { margin: 0; padding: 0; } .receipt-container { border: none; padding: 10px; max-width: 100%; } }
+            `;
+            element.appendChild(styleSheet);
             
-            // Use html2pdf with proper settings
+            // Generate the receipt HTML
+            element.innerHTML += generateReceiptHTML(orderData);
+            
+            // Optimized PDF settings for clean output
             const opt = {
-                margin: 10,
+                margin: [10, 10, 10, 10],
                 filename: `amexan-receipt-${orderId}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { 
-                    scale: 2,
+                    scale: 1.5,
                     useCORS: true,
                     logging: false,
-                    windowWidth: 750, // Match container width
-                    allowTaint: true
+                    windowWidth: 650,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff'
                 },
                 jsPDF: { 
-                    unit: 'px', 
+                    unit: 'mm', 
                     format: 'a4', 
                     orientation: 'portrait'
                 },
-                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Better page breaks
+                pagebreak: { 
+                    mode: ['avoid-all', 'css', 'legacy'],
+                    before: '.page-break-before',
+                    after: '.page-break-after'
+                }
             };
             
             // Generate and save PDF
             await html2pdf().set(opt).from(element).save();
             
-            showNotification(`Receipt downloaded successfully for order ${orderId}`, 'success');
+            showNotification(`Professional receipt downloaded successfully for order ${orderId}`, 'success');
         } else {
             throw new Error('Order not found');
         }
@@ -1296,29 +1096,6 @@
         console.error('Error downloading receipt:', error);
         showNotification('Error downloading receipt: ' + error.message, 'error');
     }
-}
-
-    
-
-// Utility functions
-function formatCurrency(amount) {
-    return `KSH ${(amount || 0).toFixed(2)}`;
-}
-
-function formatReceiptDate(date) {
-    return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: '2-digit', 
-        year: 'numeric'
-    });
-}
-
-function formatStampDate(date) {
-    return date.toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    });
 }
 
 function generateReceiptHTML(order) {
@@ -1357,7 +1134,7 @@ function generateReceiptHTML(order) {
                 <h1 class="company-title">AMEXAN MEDICAL GROUP</h1>
                 
                 <div class="logo-container">
-                    <img src="logo.png" alt="Amexan Logo" class="logo-img" />
+                    <img src="images/logo.png" alt="Amexan Logo" class="logo-img" />
                 </div>
                 
                 <div class="contact-info">
@@ -1455,7 +1232,7 @@ function generateReceiptHTML(order) {
                 <!-- Bottom Section with Stamp and Signoff -->
                 <div class="bottom-section">
                     <div class="stamp-container">
-                        <img src="stamp.png" alt="Official Stamp" class="stamp-img" />
+                        <img src="images/stamp.png" alt="Official Stamp" class="stamp-img" />
                         <div class="stamp-date">${stampDate}</div>
                     </div>
                     
@@ -1475,8 +1252,26 @@ function generateReceiptHTML(order) {
     `;
 }
 
+// Add these utility functions if they don't exist in your code
+function formatReceiptDate(date) {
+    if (!date) return 'N/A';
+    const dateObj = date.toDate ? date.toDate() : new Date(date);
+    return dateObj.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+}
 
-   // ==================== PAGINATION FUNCTIONS ====================
+function formatStampDate(date) {
+    if (!date) return 'N/A';
+    const dateObj = date.toDate ? date.toDate() : new Date(date);
+    return dateObj.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+    }).replace(/\//g, '-');
+}  // ==================== PAGINATION FUNCTIONS ====================
         function updatePagination() {
             totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
             const startIndex = (currentPage - 1) * ordersPerPage;
