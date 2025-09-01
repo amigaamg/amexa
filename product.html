@@ -197,58 +197,18 @@
                     </div>
                     
                     <div class="flex gap-4">
-    <!-- SELL IT & EARN Button -->
-    <a id="sellBtn" 
-       href="#" 
-       target="_blank"
-       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
+    <a id="sellBtn" href="#" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition no-underline">
         <i class="fas fa-hand-holding-usd"></i>
         SELL IT & EARN
     </a>
-
-    <!-- CHAT WITH US Button -->
-    <a id="chatBtn" 
-       href="#" 
-       target="_blank"
-       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+    <a id="chatBtn" href="#" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition no-underline">
         <i class="fas fa-comments"></i>
         CHAT WITH US
     </a>
 </div>
-
-<script>
-    // Replace with your WhatsApp number (use international format without '+')
-    const whatsappNumber = "254793666825";
-
-    // Example: Get product title dynamically (ensure you have element with id="productTitle")
-    const productTitle = document.getElementById("productTitle")?.innerText || "this product";
-
-    // SELL IT & EARN message (Dan Lok style - powerful & official)
-    const sellMessage = 
-        `Hello Amexan Team, I am interested in your SELL IT & EARN program.\n\n` +
-        `I would like to discuss selling **${productTitle}** through Amexan and earning from it.\n\n` +
-        `Here are my details:\n` +
-        `- Full Name:\n` +
-        `- Contact Email:\n` +
-        `- My Role (Individual / Business / Institution):\n\n` +
-        `Looking forward to partnering with Amexan.`;
-
-    // CHAT WITH US message (engaging yet professional)
-    const chatMessage = 
-        `Hello Amexan, I would like to CHAT with your team regarding **${productTitle}**.\n\n` +
-        `Here are my details:\n` +
-        `- Name:\n` +
-        `- Inquiry / Interest:\n\n` +
-        `Please guide me further.`;
-
-    // Update button hrefs with prefilled WhatsApp links
-    document.getElementById("sellBtn").href = 
-        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sellMessage)}`;
-
-    document.getElementById("chatBtn").href = 
-        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(chatMessage)}`;
-</script>
-
+                </div>
+            </div>
+            
             <!-- Right Panel: Product Info + CTA -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h1 id="productTitle" class="text-3xl font-bold text-gray-800 mb-2">Loading...</h1>
@@ -306,27 +266,15 @@
             </div>
             
             <div class="flex gap-4">
-    <!-- SELL IT & EARN Button -->
-    <a id="sellBtn" 
-       href="#" 
-       target="_blank"
-       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
+    <a id="sellBtnMobile" href="#" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition no-underline">
         <i class="fas fa-hand-holding-usd"></i>
         SELL IT & EARN
     </a>
-
-    <!-- CHAT WITH US Button -->
-    <a id="chatBtn" 
-       href="#" 
-       target="_blank"
-       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+    <a id="chatBtnMobile" href="#" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition no-underline">
         <i class="fas fa-comments"></i>
         CHAT WITH US
     </a>
 </div>
-
-
-
         </div>
         
         <!-- Related Products -->
@@ -1145,6 +1093,46 @@
         window.buyNow = buyNow;
         window.scrollThumbnailsUp = scrollThumbnailsUp;
         window.scrollThumbnailsDown = scrollThumbnailsDown;
+        // Function to generate WhatsApp links with product info
+function generateWhatsAppLink(type) {
+    const phoneNumber = "254793666825"; // Your Kenya WhatsApp number in international format
+    const productName = currentProduct ? currentProduct.name : 'Product';
+    const productPrice = currentProduct ? (currentProduct.discountedPrice || currentProduct.originalPrice || 0) : 0;
+    
+    let message = "";
+    
+    if (type === 'sell') {
+        message = `Hi AMEXAN! I'm interested in becoming a seller for "${productName}" (KES ${productPrice.toLocaleString()}). Could you please provide more information about your seller program and commission structure?`;
+    } else if (type === 'chat') {
+        message = `Hi AMEXAN! I have questions about "${productName}" (KES ${productPrice.toLocaleString()}). Could you please help me with more details about this product?`;
+    }
+    
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+}
+// Action buttons - both mobile and desktop versions (REPLACE EXISTING)
+document.getElementById('sellBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const whatsappUrl = generateWhatsAppLink('sell');
+    window.open(whatsappUrl, '_blank');
+});
+
+document.getElementById('chatBtn').addEventListener('click', (e) => {
+    e.preventDefault();
+    const whatsappUrl = generateWhatsAppLink('chat');
+    window.open(whatsappUrl, '_blank');
+});
+
+document.getElementById('sellBtnMobile').addEventListener('click', (e) => {
+    e.preventDefault();
+    const whatsappUrl = generateWhatsAppLink('sell');
+    window.open(whatsappUrl, '_blank');
+});
+
+document.getElementById('chatBtnMobile').addEventListener('click', (e) => {
+    e.preventDefault();
+    const whatsappUrl = generateWhatsAppLink('chat');
+    window.open(whatsappUrl, '_blank');
+});
 
     </script>
 </body>
