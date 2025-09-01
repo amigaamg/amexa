@@ -6,7 +6,24 @@
     <title>My Orders | Amexan Medical</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add html2pdf library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8',
+                        secondary: '#3b82f6',
+                        success: '#10b981',
+                        warning: '#f59e0b',
+                        danger: '#ef4444',
+                        accent: '#f97316'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -411,272 +428,82 @@
         }
         
         /* ===== PDF & Print-Optimized Receipt ===== */
-        .receipt-container {
-            width: 750px;
-            margin: 0 auto;
-            padding: 30px;
-            background-color: white;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        
-        .company-title {
-            color: #0000CD;
-            font-size: 28px;
-            font-weight: 700;
-            text-align: center;
-            margin-bottom: 5px;
-            letter-spacing: 0.5px;
-        }
-        
-        .tagline {
-            font-style: italic;
-            color: #555;
-            margin-top: 5px;
-            font-size: 14px;
-        }
-        
-        .contact-info {
-            text-align: center;
-            margin: 15px 0;
-            color: #444;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .details-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 25px;
-            margin: 25px 0;
-            padding: 20px;
-            background-color: #f9fafb;
-            border-radius: 8px;
-        }
-        
-        .section-title {
-            color: #0000CD;
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid #e5e7eb;
-            padding-bottom: 8px;
-        }
-        
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .detail-value {
-            color: #111827;
-            text-align: right;
-        }
-        
-        .status-completed {
-            color: #059669;
-            font-weight: 600;
-        }
-        
-        .order-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
-        }
-        
-        .order-header {
-            background-color: #0000CD;
-            color: white;
-        }
-        
-        .order-header th {
-            padding: 12px 15px;
-            text-align: left;
-            font-weight: 600;
-        }
-        
-        .item-row {
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .item-cell {
-            padding: 12px 15px;
-            color: #374151;
-        }
-        
-        .item-cell.center {
-            text-align: center;
-        }
-        
-        .summary-section {
-            margin-top: 30px;
-        }
-        
-        .totals-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .totals-table td {
-            padding: 8px 0;
-            border-bottom: 1px solid #e5e7eb;
-        }
-        
-        .total-row {
-            font-weight: 700;
-            font-size: 18px;
-            border-top: 2px solid #0000CD;
-        }
-        
-        .total-row td {
-            padding-top: 15px;
-            border-bottom: none;
-        }
-        
-        .bottom-section {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px dashed #cbd5e1;
-        }
-        
-        .stamp-container {
-            text-align: center;
-        }
-        
-        .stamp-img {
-            width: 120px;
-            height: 120px;
-            border: 2px solid #0000CD;
-            border-radius: 50%;
-            padding: 8px;
-            margin-bottom: 8px;
-        }
-        
-        .stamp-date {
-            font-size: 12px;
-            color: #6b7280;
-        }
-        
-        .signoff {
-            text-align: right;
-        }
-        
-        .signoff-text {
-            font-size: 14px;
-            color: #6b7280;
-            margin-bottom: 5px;
-        }
-        
-        .signoff-name {
-            font-weight: 600;
-            color: #0000CD;
-            border-top: 1px solid #cbd5e1;
-            padding-top: 5px;
-        }
-        
-        .thank-you {
-            margin-top: 30px;
-            text-align: center;
-            color: #0000CD;
-            font-weight: 600;
-            font-size: 16px;
-            padding: 15px;
-            background-color: #f0f7ff;
-            border-radius: 8px;
-        }
-        
-        .logo-img {
-            height: 80px;
-            display: block;
-            margin: 0 auto 15px;
-        }
-        
-        @media print {
-            body {
-                background-color: white;
-            }
-            .receipt-container {
-                box-shadow: none;
-                padding: 0;
-                width: 100%;
-            }
-        }
 
-        @media (max-width: 640px) {
-          .search-filter-bar .grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
-          #searchInput, #statusFilter { font-size: 12px !important; padding: 6px 8px !important; }
-          .search-filter-bar label { font-size: 11px; margin-bottom: 4px; }
-        }
+/* Outer wrapper - hidden by default */
 
-        /* Scrollable container for mobile */
-        .orders-table {
-          overflow-x: auto;
-          -webkit-overflow-scrolling: touch;
-        }
 
-        /* Table base styling */
-        .orders-table table {
-          border-collapse: collapse;
-          width: 100%;
-          min-width: 700px; /* so scrolling activates on small screens */
-          font-size: 12px; /* compact font */
-        }
 
-        /* Brand blue header row */
-        .orders-table thead tr {
-          background-color: #0000CD !important; /* force brand blue */
-        }
+<style>
+@media (max-width: 640px) {
+  .search-filter-bar .grid { grid-template-columns: 1fr 1fr !important; gap: 8px !important; }
+  #searchInput, #statusFilter { font-size: 12px !important; padding: 6px 8px !important; }
+  .search-filter-bar label { font-size: 11px; margin-bottom: 4px; }
+}
+</style>
+<style>
+/* Scrollable container for mobile */
+.orders-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
-        .orders-table thead th {
-          color: white !important;
-          font-weight: 700;
-          padding: 6px 8px;
-          white-space: nowrap;
-          text-align: left;
-        }
+/* Table base styling */
+.orders-table table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 700px; /* so scrolling activates on small screens */
+  font-size: 12px; /* compact font */
+}
 
-        /* Row styling */
-        .orders-table tbody tr {
-          border-bottom: 1px solid #e5e7eb; /* light gray border */
-        }
+/* Brand blue header row */
+.orders-table thead tr {
+  background-color: #0000CD !important; /* force brand blue */
+}
 
-        .orders-table tbody td {
-          padding: 5px 8px;
-          white-space: nowrap; /* keep horizontal layout */
-          font-size: 12px;
-          vertical-align: middle;
-        }
+.orders-table thead th {
+  color: white !important;
+  font-weight: 700;
+  padding: 6px 8px;
+  white-space: nowrap;
+  text-align: left;
+}
 
-        /* Order ID column styling */
-        .orders-table tbody td:nth-child(2) {
-          color: #0000CD; /* brand blue */
-          font-weight: bold;
-        }
+/* Row styling */
+.orders-table tbody tr {
+  border-bottom: 1px solid #e5e7eb; /* light gray border */
+}
 
-        /* Hover effect for desktop */
-        .orders-table tbody tr:hover {
-          background-color: #f9fafb;
-        }
+.orders-table tbody td {
+  padding: 5px 8px;
+  white-space: nowrap; /* keep horizontal layout */
+  font-size: 12px;
+  vertical-align: middle;
+}
 
-        /* Mobile adjustments */
-        @media (max-width: 640px) {
-          .orders-table table {
-            font-size: 11px;
-            min-width: 600px;
-          }
-          .orders-table thead th, 
-          .orders-table tbody td {
-            padding: 4px 6px;
-          }
-        }
+/* Order ID column styling */
+.orders-table tbody td:nth-child(2) {
+  color: #0000CD; /* brand blue */
+  font-weight: bold;
+}
+
+/* Hover effect for desktop */
+.orders-table tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .orders-table table {
+    font-size: 11px;
+    min-width: 600px;
+  }
+  .orders-table thead th, 
+  .orders-table tbody td {
+    padding: 4px 6px;
+  }
+}
+</style>
+
     </style>
 </head>
 <body>
@@ -689,7 +516,7 @@
       <!-- Logo -->
       <div class="flex items-center">
         <a href="index.html" class="flex items-center">
-          <img src="images/logo.png" alt="Amexan Logo" class="h-15 w-auto" />
+          <img src="images/logo.png" alt="Amexan Logo" class="h-20 w-auto" />
         </a>
       </div>
 
@@ -805,6 +632,64 @@
         </div>
     </div>
 </div>
+
+<script>
+(function () {
+  const mq = window.matchMedia('(max-width: 640px)');
+  const grid = document.querySelector('.search-filter-bar .grid');
+  const searchWrap = document.querySelector('.search-filter-bar .grid > :first-child');
+  const filterWrap = document.querySelector('.search-filter-bar .grid > :nth-child(2)');
+  const searchInput = document.getElementById('searchInput');
+  const statusFilter = document.getElementById('statusFilter');
+  const labels = document.querySelectorAll('.search-filter-bar label');
+
+  function applyMobileCompact() {
+    if (!grid || !searchInput || !statusFilter) return;
+
+    if (mq.matches) {
+      // Keep them side-by-side on mobile
+      grid.style.display = 'grid';
+      grid.style.gridTemplateColumns = '1fr 1fr';
+      grid.style.gap = '8px';
+      if (searchWrap) searchWrap.style.gridColumn = 'span 1 / span 1';
+      if (filterWrap) filterWrap.style.gridColumn = 'span 1 / span 1';
+
+      // Compact the inputs (override any existing padding)
+      searchInput.style.setProperty('font-size', '12px', 'important');
+      searchInput.style.setProperty('padding', '6px 8px', 'important');
+      statusFilter.style.setProperty('font-size', '12px', 'important');
+      statusFilter.style.setProperty('padding', '6px 8px', 'important');
+
+      // Tighter labels
+      labels.forEach(l => {
+        l.style.setProperty('font-size', '11px');
+        l.style.setProperty('margin-bottom', '4px');
+      });
+    } else {
+      // Reset for >= 641px
+      grid.style.gridTemplateColumns = '';
+      grid.style.gap = '';
+      if (searchWrap) searchWrap.style.gridColumn = '';
+      if (filterWrap) filterWrap.style.gridColumn = '';
+
+      searchInput.style.removeProperty('font-size');
+      searchInput.style.removeProperty('padding');
+      statusFilter.style.removeProperty('font-size');
+      statusFilter.style.removeProperty('padding');
+      labels.forEach(l => {
+        l.style.removeProperty('font-size');
+        l.style.removeProperty('margin-bottom');
+      });
+    }
+  }
+
+  applyMobileCompact();
+  mq.addEventListener ? mq.addEventListener('change', applyMobileCompact)
+                      : window.addEventListener('resize', applyMobileCompact);
+})();
+</script>
+
+
 
             <!-- Orders Container -->
             <div id="ordersContainer">
@@ -1100,219 +985,218 @@
         }
 
         // ==================== PDF RECEIPT FUNCTIONS ====================
-        async function downloadReceipt(orderDocId, orderId) {
-            showNotification(`Generating detailed receipt for order ${orderId}...`, 'info');
+        // Base64 encoded images for logo and stamp
+       
+        
+       async function downloadReceipt(orderDocId, orderId) {
+    showNotification(`Generating detailed receipt for order ${orderId}...`, 'info');
+    
+    try {
+        const orderDoc = await window.firebaseImports.getDoc(
+            window.firebaseImports.doc(db, 'orders', orderDocId)
+        );
+        
+        if (orderDoc.exists()) {
+            const orderData = { id: orderDoc.id, ...orderDoc.data() };
             
-            try {
-                const orderDoc = await window.firebaseImports.getDoc(
-                    window.firebaseImports.doc(db, 'orders', orderDocId)
-                );
-                
-                if (orderDoc.exists()) {
-                    const orderData = { id: orderDoc.id, ...orderDoc.data() };
-                    
-                    // Create a temporary container for PDF generation
-                    const element = document.createElement('div');
-                    element.style.width = '750px';
-                    element.style.padding = '30px';
-                    element.style.fontFamily = "'Inter', sans-serif";
-                    element.style.color = '#2c3e50';
-                    
-                    // Generate the receipt HTML with proper structure
-                    element.innerHTML = generateReceiptHTML(orderData);
-                    
-                    // Use html2pdf with proper settings
-                    const opt = {
-                        margin: 10,
-                        filename: `amexan-receipt-${orderId}.pdf`,
-                        image: { type: 'jpeg', quality: 0.98 },
-                        html2canvas: { 
-                            scale: 2,
-                            useCORS: true,
-                            logging: false,
-                            windowWidth: 750,
-                            allowTaint: true
-                        },
-                        jsPDF: { 
-                            unit: 'px', 
-                            format: 'a4', 
-                            orientation: 'portrait'
-                        },
-                        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
-                    };
-                    
-                    // Generate and save PDF
-                    await html2pdf().set(opt).from(element).save();
-                    
-                    showNotification(`Receipt downloaded successfully for order ${orderId}`, 'success');
-                } else {
-                    throw new Error('Order not found');
-                }
-            } catch (error) {
-                console.error('Error downloading receipt:', error);
-                showNotification('Error downloading receipt: ' + error.message, 'error');
-            }
+            // Create a temporary container for PDF generation
+            const element = document.createElement('div');
+            element.style.width = '750px'; // Reduced from 800px
+            element.style.padding = '20px';
+            element.style.fontFamily = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+            element.style.color = '#2c3e50';
+            
+            // Generate the receipt HTML with proper structure
+            element.innerHTML = generateReceiptHTML(orderData);
+            
+            // Use html2pdf with proper settings
+            const opt = {
+                margin: 10,
+                filename: `amexan-receipt-${orderId}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { 
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: 750, // Match container width
+                    allowTaint: true
+                },
+                jsPDF: { 
+                    unit: 'px', 
+                    format: 'a4', 
+                    orientation: 'portrait'
+                },
+                pagebreak: { mode: ['avoid-all', 'css', 'legacy'] } // Better page breaks
+            };
+            
+            // Generate and save PDF
+            await html2pdf().set(opt).from(element).save();
+            
+            showNotification(`Receipt downloaded successfully for order ${orderId}`, 'success');
+        } else {
+            throw new Error('Order not found');
         }
+    } catch (error) {
+        console.error('Error downloading receipt:', error);
+        showNotification('Error downloading receipt: ' + error.message, 'error');
+    }
+}
 
-        function generateReceiptHTML(order) {
-            const orderDate = order.orderDate?.toDate ? order.orderDate.toDate() : new Date(order.orderDate || Date.now());
-            const formattedDate = formatReceiptDate(orderDate);
-            const stampDate = formatStampDate(orderDate);
+function generateReceiptHTML(order) {
+    const orderDate = order.orderDate?.toDate ? order.orderDate.toDate() : new Date(order.orderDate || Date.now());
+    const formattedDate = formatReceiptDate(orderDate);
+    const stampDate = formatStampDate(orderDate);
+    
+    // Customer details
+    const customerInfo = order.customerInfo || order.customer || {};
+    const firstName = customerInfo.firstName || customerInfo.name?.split(' ')[0] || '';
+    const lastName = customerInfo.lastName || customerInfo.name?.split(' ').slice(1).join(' ') || '';
+    const fullName = `${firstName} ${lastName}`.trim() || 'Unknown Customer';
+    const shippingAddress = order.shipping?.address || customerInfo.shippingaddress || customerInfo.address || 'No shipping address provided';
+    
+    // Calculate tax (5%)
+    const tax = (order.subtotal || 0) * 0.05;
+    
+    // Order items
+    let orderItemsHTML = '';
+    (order.items || []).forEach((item, index) => {
+        orderItemsHTML += `
+            <tr class="item-row">
+                <td class="item-cell">${item.name || 'Unknown Product'}</td>
+                <td class="item-cell center">-</td>
+                <td class="item-cell center">${formatCurrency(item.price || 0)}</td>
+                <td class="item-cell center">${item.quantity || 1}</td>
+                <td class="item-cell center">${formatCurrency((item.price || 0) * (item.quantity || 1))}</td>
+            </tr>
+        `;
+    });
+    
+    return `
+       
+        
+        <div class="receipt-container">
+            <!-- Header Section -->
+            <div class="receipt-section header-section">
+                <h1 class="company-title">AMEXAN MEDICAL GROUP</h1>
+                
+                <div class="logo-container">
+                    <img src="logo.png" alt="Amexan Logo" class="logo-img" />
+                </div>
+                
+                <div class="contact-info">
+                    P.O BOX 408 - KISII<br>
+                    Contact: 0793666825 | Email: support@amexan.com<br>
+                    <div class="tagline">Bringing Quality Healthcare to Your Doorstep</div>
+                </div>
+            </div>
             
-            // Customer details
-            const customerInfo = order.customerInfo || order.customer || {};
-            const firstName = customerInfo.firstName || customerInfo.name?.split(' ')[0] || '';
-            const lastName = customerInfo.lastName || customerInfo.name?.split(' ').slice(1).join(' ') || '';
-            const fullName = `${firstName} ${lastName}`.trim() || 'Unknown Customer';
-            const shippingAddress = order.shipping?.address || customerInfo.shippingaddress || customerInfo.address || 'No shipping address provided';
-            
-            // Calculate tax (5%)
-            const tax = (order.subtotal || 0) * 0.05;
-            
-            // Order items
-            let orderItemsHTML = '';
-            (order.items || []).forEach((item, index) => {
-                orderItemsHTML += `
-                    <tr class="item-row">
-                        <td class="item-cell">${item.name || 'Unknown Product'}</td>
-                        <td class="item-cell center">-</td>
-                        <td class="item-cell center">${formatCurrency(item.price || 0)}</td>
-                        <td class="item-cell center">${item.quantity || 1}</td>
-                        <td class="item-cell center">${formatCurrency((item.price || 0) * (item.quantity || 1))}</td>
-                    </tr>
-                `;
-            });
-            
-            return `
-                <div class="receipt-container">
-                    <!-- Header Section -->
-                    <div class="header-section">
-                        <h1 class="company-title">AMEXAN MEDICAL GROUP</h1>
-                        
-                        <div class="logo-container">
-                            <div class="logo-img bg-gray-200 rounded-full flex items-center justify-center text-gray-400">
-                                <i class="fas fa-hospital-alt text-4xl"></i>
-                            </div>
-                        </div>
-                        
-                        <div class="contact-info">
-                            P.O BOX 408 - KISII<br>
-                            Contact: 0793666825 | Email: support@amexan.com<br>
-                            <div class="tagline">Bringing Quality Healthcare to Your Doorstep</div>
-                        </div>
+            <!-- Combined Details Section -->
+            <div class="details-section">
+                <div class="order-details">
+                    <h3 class="section-title">Order Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Order ID:</span>
+                        <span class="detail-value">${order.orderId || order.id}</span>
                     </div>
-                    
-                    <!-- Combined Details Section -->
-                    <div class="details-section">
-                        <div class="order-details">
-                            <h3 class="section-title">Order Details</h3>
-                            <div class="detail-row">
-                                <span class="detail-label">Order ID:</span>
-                                <span class="detail-value">${order.orderId || order.id}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Date:</span>
-                                <span class="detail-value">${formattedDate}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Status:</span>
-                                <span class="detail-value status-completed">Completed</span>
-                            </div>
-                        </div>
-                        
-                        <div class="customer-details">
-                            <h3 class="section-title">Customer Details</h3>
-                            <div class="detail-row">
-                                <span class="detail-label">Full Name:</span>
-                                <span class="detail-value">${fullName}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Phone Number:</span>
-                                <span class="detail-value">${customerInfo.phone || 'N/A'}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Email:</span>
-                                <span class="detail-value">${customerInfo.email || 'N/A'}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Shipping Location:</span>
-                                <span class="detail-value">${shippingAddress}</span>
-                            </div>
-                            <div class="detail-row">
-                                <span class="detail-label">Shipping Specs:</span>
-                                <span class="detail-value">${order.deliveryNotes || order.notes || 'Standard Delivery'}</span>
-                            </div>
-                        </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date:</span>
+                        <span class="detail-value">${formattedDate}</span>
                     </div>
-                    
-                    <!-- Order Summary Section -->
-                    <div class="order-section">
-                        <h3 class="section-title">Order Summary</h3>
-                        <table class="order-table">
-                            <thead class="order-header">
-                                <tr>
-                                    <th>Product</th>
-                                    <th>Color</th>
-                                    <th>Price</th>
-                                    <th>Qty</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                ${orderItemsHTML}
-                            </tbody>
-                        </table>
-                    </div>
-                    
-                    <!-- Summary Section -->
-                    <div class="summary-section">
-                        <div class="totals-container">
-                            <table class="totals-table">
-                                <tr>
-                                    <td>Subtotal:</td>
-                                    <td>${formatCurrency(order.subtotal || 0)}</td>
-                                </tr>
-                                <tr>
-                                    <td>Tax (5%):</td>
-                                    <td>${formatCurrency(tax)}</td>
-                                </tr>
-                                <tr>
-                                    <td>Shipping:</td>
-                                    <td>${formatCurrency(order.shippingCost || 0)}</td>
-                                </tr>
-                                <tr class="total-row">
-                                    <td>Total:</td>
-                                    <td>${formatCurrency(order.totalAmount || 0)}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        
-                        <!-- Bottom Section with Stamp and Signoff -->
-                        <div class="bottom-section">
-                            <div class="stamp-container">
-                                <div class="stamp-img bg-gray-100 flex items-center justify-center text-gray-400">
-                                    <i class="fas fa-stamp text-4xl"></i>
-                                </div>
-                                <div class="stamp-date">${stampDate}</div>
-                            </div>
-                            
-                            <div class="signoff">
-                                <div class="signoff-text">Served with great care and professionalism by</div>
-                                <div class="signoff-name">Dr. CKM, Medical Director</div>
-                            </div>
-                        </div>
-                        
-                        <!-- Thank you message -->
-                        <div class="thank-you">
-                            Thank you for choosing Amexan! We appreciate your trust in our medical supplies.<br>
-                            Your satisfaction is our priority. For any inquiries, contact us at support@amexan.com
-                        </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value status-completed">Completed</span>
                     </div>
                 </div>
-            `;
-        }
-
-        // ==================== PAGINATION FUNCTIONS ====================
+                
+                <div class="customer-details">
+                    <h3 class="section-title">Customer Details</h3>
+                    <div class="detail-row">
+                        <span class="detail-label">Full Name:</span>
+                        <span class="detail-value">${fullName}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Phone Number:</span>
+                        <span class="detail-value">${customerInfo.phone || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email:</span>
+                        <span class="detail-value">${customerInfo.email || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Shipping Location:</span>
+                        <span class="detail-value">${shippingAddress}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Shipping Specs:</span>
+                        <span class="detail-value">${order.deliveryNotes || order.notes || 'Standard Delivery'}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Order Summary Section -->
+            <div class="receipt-section order-section">
+                <h3 class="section-title">Order Summary</h3>
+                <table class="order-table">
+                    <thead class="order-header">
+                        <tr>
+                            <th>Product</th>
+                            <th>Color</th>
+                            <th>Price</th>
+                            <th>Qty</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orderItemsHTML}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Summary Section -->
+            <div class="summary-section">
+                <div class="totals-container">
+                    <table class="totals-table">
+                        <tr>
+                            <td>Subtotal:</td>
+                            <td>${formatCurrency(order.subtotal || 0)}</td>
+                        </tr>
+                        <tr>
+                            <td>Tax (5%):</td>
+                            <td>${formatCurrency(tax)}</td>
+                        </tr>
+                        <tr>
+                            <td>Shipping:</td>
+                            <td>${formatCurrency(order.shippingCost || 0)}</td>
+                        </tr>
+                        <tr class="total-row">
+                            <td>Total:</td>
+                            <td>${formatCurrency(order.totalAmount || 0)}</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <!-- Bottom Section with Stamp and Signoff -->
+                <div class="bottom-section">
+                    <div class="stamp-container">
+                        <img src="stamp.png" alt="Official Stamp" class="stamp-img" />
+                        <div class="stamp-date">${stampDate}</div>
+                    </div>
+                    
+                    <div class="signoff">
+                        <div class="signoff-text">Served with great care and professionalism by</div>
+                        <div class="signoff-name">Dr. CKM, Medical Director</div>
+                    </div>
+                </div>
+                
+                <!-- Thank you message -->
+                <div class="thank-you">
+                    Thank you for choosing Amexan! We appreciate your trust in our medical supplies.<br>
+                    Your satisfaction is our priority. For any inquiries, contact us at support@amexan.com
+                </div>
+            </div>
+        </div>
+    `;
+}      // ==================== PAGINATION FUNCTIONS ====================
         function updatePagination() {
             totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
             const startIndex = (currentPage - 1) * ordersPerPage;
@@ -1553,7 +1437,7 @@
                     window.firebaseImports.orderBy('orderDate', 'desc')
                 );
 
-                unsubscribeOrdersListener = window.firebaseImports.onSnapshot(q, (querySnapshot) {
+                unsubscribeOrdersListener = window.firebaseImports.onSnapshot(q, (querySnapshot) => {
                     const orders = [];
                     
                     querySnapshot.forEach((doc) => {
