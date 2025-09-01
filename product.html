@@ -197,18 +197,58 @@
                     </div>
                     
                     <div class="flex gap-4">
-                        <button id="sellBtn" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
-                            <i class="fas fa-hand-holding-usd"></i>
-                            SELL IT & EARN
-                        </button>
-                        <button id="chatBtn" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
-                            <i class="fas fa-comments"></i>
-                            CHAT WITH US
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
+    <!-- SELL IT & EARN Button -->
+    <a id="sellBtn" 
+       href="#" 
+       target="_blank"
+       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
+        <i class="fas fa-hand-holding-usd"></i>
+        SELL IT & EARN
+    </a>
+
+    <!-- CHAT WITH US Button -->
+    <a id="chatBtn" 
+       href="#" 
+       target="_blank"
+       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+        <i class="fas fa-comments"></i>
+        CHAT WITH US
+    </a>
+</div>
+
+<script>
+    // Replace with your WhatsApp number (use international format without '+')
+    const whatsappNumber = "254793666825";
+
+    // Example: Get product title dynamically (ensure you have element with id="productTitle")
+    const productTitle = document.getElementById("productTitle")?.innerText || "this product";
+
+    // SELL IT & EARN message (Dan Lok style - powerful & official)
+    const sellMessage = 
+        `Hello Amexan Team, I am interested in your SELL IT & EARN program.\n\n` +
+        `I would like to discuss selling **${productTitle}** through Amexan and earning from it.\n\n` +
+        `Here are my details:\n` +
+        `- Full Name:\n` +
+        `- Contact Email:\n` +
+        `- My Role (Individual / Business / Institution):\n\n` +
+        `Looking forward to partnering with Amexan.`;
+
+    // CHAT WITH US message (engaging yet professional)
+    const chatMessage = 
+        `Hello Amexan, I would like to CHAT with your team regarding **${productTitle}**.\n\n` +
+        `Here are my details:\n` +
+        `- Name:\n` +
+        `- Inquiry / Interest:\n\n` +
+        `Please guide me further.`;
+
+    // Update button hrefs with prefilled WhatsApp links
+    document.getElementById("sellBtn").href = 
+        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(sellMessage)}`;
+
+    document.getElementById("chatBtn").href = 
+        `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(chatMessage)}`;
+</script>
+
             <!-- Right Panel: Product Info + CTA -->
             <div class="bg-white rounded-lg shadow-md p-6">
                 <h1 id="productTitle" class="text-3xl font-bold text-gray-800 mb-2">Loading...</h1>
@@ -266,15 +306,27 @@
             </div>
             
             <div class="flex gap-4">
-                <button id="sellBtnMobile" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
-                    <i class="fas fa-hand-holding-usd"></i>
-                    SELL IT & EARN
-                </button>
-                <button id="chatBtnMobile" class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
-                    <i class="fas fa-comments"></i>
-                    CHAT WITH US
-                </button>
-            </div>
+    <!-- SELL IT & EARN Button -->
+    <a id="sellBtn" 
+       href="#" 
+       target="_blank"
+       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-brandBlue text-brandBlue rounded-lg hover:bg-brandBlue hover:text-white transition">
+        <i class="fas fa-hand-holding-usd"></i>
+        SELL IT & EARN
+    </a>
+
+    <!-- CHAT WITH US Button -->
+    <a id="chatBtn" 
+       href="#" 
+       target="_blank"
+       class="flex-1 flex items-center justify-center gap-2 px-4 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition">
+        <i class="fas fa-comments"></i>
+        CHAT WITH US
+    </a>
+</div>
+
+
+
         </div>
         
         <!-- Related Products -->
