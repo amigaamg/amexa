@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Amexan Admin Dashboard</title>
-  <link rel="icon" type="image/png" href="images/favicon.png" />
-<link rel="shortcut icon" href="images/favicon.png" type="image/png" />
+  
+  <!-- ✅ Put favicon.png inside /public or /images folder -->
+  <link rel="icon" type="image/png" href="/images/favicon.png" />
+  <link rel="shortcut icon" href="/images/favicon.png" type="image/png" />
+
   <style>
     body {
       font-family: "Segoe UI", sans-serif;
@@ -20,10 +23,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
     }
     header h1 {
       margin: 0;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
+      letter-spacing: 0.5px;
     }
     .dashboard {
       display: grid;
@@ -62,6 +67,7 @@
       color: white;
       text-decoration: none;
       font-size: 0.9rem;
+      transition: background 0.2s;
     }
     .card a:hover {
       background: #00357d;
@@ -79,21 +85,23 @@
       <p>Manage, edit, and add products.</p>
       <a href="admin.html">Go to Products</a>
     </div>
+
     <div class="card">
       <h2>Orders</h2>
       <p>View and track customer orders.</p>
-      <a href="admin order.html">Go to Orders</a>
+      <a href="admin-order.html">Go to Orders</a>
     </div>
 
     <div class="card">
       <h2>Create Packages</h2>
-      <p>Manage, edit, and add products.</p>
+      <p>Create and manage packages.</p>
       <a href="package-admin.html">Go to Packages</a>
     </div>
+
     <div class="card">
-      <h2>Package Orders</h2>
-      <p>Manage, edit, and add products.</p>
-      <a href="admin payment.html">Go to Package Payment</a>
+      <h2>Package Payments</h2>
+      <p>Track payments for packages.</p>
+      <a href="admin-payment.html">Go to Payments</a>
     </div>
   </main>
 </body>
