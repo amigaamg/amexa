@@ -6,24 +6,7 @@
     <title>My Orders | Amexan Medical</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Add html2pdf library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#1d4ed8',
-                        secondary: '#3b82f6',
-                        success: '#10b981',
-                        warning: '#f59e0b',
-                        danger: '#ef4444',
-                        accent: '#f97316'
-                    }
-                }
-            }
-        }
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         
@@ -1477,7 +1460,7 @@
         }
 
         function closeAuthModal() {
-            document.getElementById('authModal').class.classList.remove('show');
+            document.getElementById('authModal').classList.remove('show');
             document.getElementById('authForm').reset();
         }
 
@@ -1570,7 +1553,7 @@
                     window.firebaseImports.orderBy('orderDate', 'desc')
                 );
 
-                unsubscribeOrdersListener = window.firebaseImports.onSnapshot(q, (querySnapshot) => {
+                unsubscribeOrdersListener = window.firebaseImports.onSnapshot(q, (querySnapshot) {
                     const orders = [];
                     
                     querySnapshot.forEach((doc) => {
@@ -2005,4 +1988,111 @@
                         lastName: 'Johnson',
                         name: 'Michael Johnson',
                         email: window.currentUser.email,
-                        phone: '
+                        phone: '+254723456789',
+                        shippingAddress: '789 Wellness Avenue, Kisumu, Kenya',
+                        address: '789 Wellness Avenue, Kisumu, Kenya'
+                    },
+                    items: [
+                        {
+                            name: 'Pulse Oximeter',
+                            brand: 'Zacurate',
+                            category: 'Medical Devices',
+                            price: 1200,
+                            quantity: 2,
+                            description: 'Fingertip pulse oximeter with LED display'
+                        },
+                        {
+                            name: 'Hand Sanitizer',
+                            brand: 'Purell',
+                            category: 'Hygiene',
+                            price: 400,
+                            quantity: 2,
+                            description: '500ml antibacterial hand sanitizer'
+                        }
+                    ],
+                    deliveryNotes: 'Call before delivery',
+                    deliveryMethod: 'Standard Delivery',
+                    estimatedDelivery: '3-5 business days'
+                }
+            ];
+            
+            // Simulate orders loading
+            setTimeout(() => {
+                userOrders = sampleOrders;
+                applyFiltersAndRender();
+                updateOrdersCount();
+                showNotification('Sample orders loaded for demonstration', 'info');
+            }, 2000);
+        }
+
+        // ==================== INITIALIZATION ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Amexan Order History page initialized');
+            
+            // Auth form handler
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            
+            // Initialize search input with debouncing
+            let searchTimeout;
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    handleSearchInput(e.target.value);
+                }, 300);
+            });
+            
+            // Close modals on outside click
+            document.getElementById('authModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeAuthModal();
+                }
+            });
+            
+            document.getElementById('orderDetailsModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeOrderDetailsModal();
+                }
+            });
+            
+            // Add keyboard navigation for modals
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeAuthModal();
+                    closeOrderDetailsModal();
+                }
+            });
+        });
+
+        // Cleanup listeners when page unloads
+        window.addEventListener('beforeunload', () => {
+            if (unsubscribeOrdersListener) {
+                unsubscribeOrdersListener();
+            }
+        });
+
+        // Make functions globally available
+        window.showAuthModal = showAuthModal;
+        window.closeAuthModal = closeAuthModal;
+        window.switchAuthMode = switchAuthMode;
+        window.logoutUser = logoutUser;
+        window.loadUserOrders = loadUserOrders;
+        window.handleStatusFilter = handleStatusFilter;
+        window.handleSearchInput = handleSearchInput;
+        window.trackOrder = trackOrder;
+        window.downloadReceipt = downloadReceipt;
+        window.contactSupport = contactSupport;
+        window.showOrderDetails = showOrderDetails;
+        window.closeOrderDetailsModal = closeOrderDetailsModal;
+        window.changePage = changePage;
+        window.generateSampleOrders = generateSampleOrders;
+
+        // Auto-load sample data if no real orders exist after 3 seconds
+        setTimeout(() => {
+            if (window.currentUser && userOrders.length === 0) {
+                console.log('No orders found, loading sample data for demonstration');
+                generateSampleOrders();
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
