@@ -281,7 +281,7 @@
         <div class="mt-16">
             <div class="flex justify-between items-center mb-8">
                 <h2 class="text-3xl font-bold text-brandBlue border-b-4 border-brandBlue pb-2">More Related Products</h2>
-                <a href="#" id="viewAllProducts" class="text-brandBlue font-semibold hover:underline flex items-center gap-2">
+                <a href="dashboard.html" id="viewAllProducts" class="text-brandBlue font-semibold hover:underline flex items-center gap-2">
                     View All
                     <i class="fas fa-arrow-right"></i>
                 </a>
@@ -386,33 +386,7 @@
             }
         }
 
-        // Create demo product for testing
-        function createDemoProduct() {
-            return {
-                id: 'demo-product',
-                name: 'Premium Medical Stethoscope',
-                brand: 'MedicalPro',
-                originalPrice: 15000,
-                discountedPrice: 12000,
-                productDetails: 'High-quality medical stethoscope with superior acoustic performance. Perfect for medical professionals and students. Features dual-head chest piece with tunable diaphragm and bell. Comfortable earpieces and durable construction ensure long-lasting use. Includes spare ear tips and carrying case.',
-                category: 'medical-equipment',
-                status: 'active',
-                detailImages: [
-                    'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1582750433449-648ed127bb54?w=600&h=600&fit=crop',
-                    'https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=600&h=600&fit=crop'
-                ],
-                rating: 4.5,
-                stock: 25,
-                minimumQuantity: 2,
-                badges: {
-                    verified: true,
-                    trust: true
-                }
-            };
-        }
-
+        
         // Render product data to the page
         function renderProductData() {
             if (!currentProduct) return;
@@ -449,10 +423,12 @@
             // Images
             setupProductGallery();
 
-            // Description - Use productDetails field as specified
+            // Description - UPDATED TO RENDER HTML PROPERLY
             const description = currentProduct.productDetails || currentProduct.description || 'No description available for this product.';
-            document.getElementById('descriptionText').textContent = description;
-            document.getElementById('descriptionTextMobile').textContent = description;
+            
+            // Use innerHTML instead of textContent to preserve HTML formatting
+            document.getElementById('descriptionText').innerHTML = description;
+            document.getElementById('descriptionTextMobile').innerHTML = description;
             
             if (currentProduct.minimumQuantity) {
                 const minQtyText = `Minimum order quantity: ${currentProduct.minimumQuantity} units`;
@@ -583,44 +559,6 @@
         function createDemoRelatedProducts() {
             return [
                 {
-                    id: 'demo-1',
-                    name: 'Digital Thermometer',
-                    brand: 'MedTech',
-                    originalPrice: 2500,
-                    discountedPrice: 2000,
-                    detailImages: ['https://images.unsplash.com/photo-1559757175-0eb30cd8c063?w=300&h=200&fit=crop'],
-                    category: 'medical-equipment',
-                    rating: 4.2
-                },
-                {
-                    id: 'demo-2',
-                    name: 'Blood Pressure Monitor',
-                    brand: 'HealthCare',
-                    originalPrice: 8500,
-                    detailImages: ['https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=300&h=200&fit=crop'],
-                    category: 'medical-equipment',
-                    rating: 4.7
-                },
-                {
-                    id: 'demo-3',
-                    name: 'Medical Gloves (Box)',
-                    brand: 'SafeGuard',
-                    originalPrice: 1200,
-                    discountedPrice: 950,
-                    detailImages: ['https://images.unsplash.com/photo-1584362917165-526a968579e8?w=300&h=200&fit=crop'],
-                    category: 'medical-equipment',
-                    rating: 4.1,
-                    badges: { verified: true }
-                },
-                {
-                    id: 'demo-4',
-                    name: 'Pulse Oximeter',
-                    brand: 'VitalCheck',
-                    originalPrice: 4500,
-                    detailImages: ['https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?w=300&h=200&fit=crop'],
-                    category: 'medical-equipment',
-                    rating: 4.5,
-                    badges: { trust: true }
                 }
             ];
         }
@@ -987,6 +925,23 @@
             container.style.transform = `translateY(${translateY}px)`;
         }
 
+        // Function to generate WhatsApp links with product info
+        function generateWhatsAppLink(type) {
+            const phoneNumber = "254793666825"; // Your Kenya WhatsApp number in international format
+            const productName = currentProduct ? currentProduct.name : 'Product';
+            const productPrice = currentProduct ? (currentProduct.discountedPrice || currentProduct.originalPrice || 0) : 0;
+            
+            let message = "";
+            
+            if (type === 'sell') {
+                message = `Hi AMEXAN! I'm interested in becoming a seller for "${productName}" (KES ${productPrice.toLocaleString()}). Could you please provide more information about your seller program and commission structure?`;
+            } else if (type === 'chat') {
+                message = `Hi AMEXAN! I have questions about "${productName}" (KES ${productPrice.toLocaleString()}). Could you please help me with more details about this product?`;
+            }
+            
+            return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+        }
+
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
             console.log('DOM loaded, initializing app...');
@@ -1034,20 +989,28 @@
             document.getElementById('buyNowBtn').addEventListener('click', buyNow);
 
             // Action buttons - both mobile and desktop versions
-            document.getElementById('sellBtn').addEventListener('click', () => {
-                showSuccessToast('Redirecting to seller portal...');
+            document.getElementById('sellBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const whatsappUrl = generateWhatsAppLink('sell');
+                window.open(whatsappUrl, '_blank');
             });
 
-            document.getElementById('chatBtn').addEventListener('click', () => {
-                showSuccessToast('Opening chat support...');
+            document.getElementById('chatBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                const whatsappUrl = generateWhatsAppLink('chat');
+                window.open(whatsappUrl, '_blank');
             });
 
-            document.getElementById('sellBtnMobile').addEventListener('click', () => {
-                showSuccessToast('Redirecting to seller portal...');
+            document.getElementById('sellBtnMobile').addEventListener('click', (e) => {
+                e.preventDefault();
+                const whatsappUrl = generateWhatsAppLink('sell');
+                window.open(whatsappUrl, '_blank');
             });
 
-            document.getElementById('chatBtnMobile').addEventListener('click', () => {
-                showSuccessToast('Opening chat support...');
+            document.getElementById('chatBtnMobile').addEventListener('click', (e) => {
+                e.preventDefault();
+                const whatsappUrl = generateWhatsAppLink('chat');
+                window.open(whatsappUrl, '_blank');
             });
 
             // Cart icon click
@@ -1093,46 +1056,6 @@
         window.buyNow = buyNow;
         window.scrollThumbnailsUp = scrollThumbnailsUp;
         window.scrollThumbnailsDown = scrollThumbnailsDown;
-        // Function to generate WhatsApp links with product info
-function generateWhatsAppLink(type) {
-    const phoneNumber = "254793666825"; // Your Kenya WhatsApp number in international format
-    const productName = currentProduct ? currentProduct.name : 'Product';
-    const productPrice = currentProduct ? (currentProduct.discountedPrice || currentProduct.originalPrice || 0) : 0;
-    
-    let message = "";
-    
-    if (type === 'sell') {
-        message = `Hi AMEXAN! I'm interested in becoming a seller for "${productName}" (KES ${productPrice.toLocaleString()}). Could you please provide more information about your seller program and commission structure?`;
-    } else if (type === 'chat') {
-        message = `Hi AMEXAN! I have questions about "${productName}" (KES ${productPrice.toLocaleString()}). Could you please help me with more details about this product?`;
-    }
-    
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
-}
-// Action buttons - both mobile and desktop versions (REPLACE EXISTING)
-document.getElementById('sellBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    const whatsappUrl = generateWhatsAppLink('sell');
-    window.open(whatsappUrl, '_blank');
-});
-
-document.getElementById('chatBtn').addEventListener('click', (e) => {
-    e.preventDefault();
-    const whatsappUrl = generateWhatsAppLink('chat');
-    window.open(whatsappUrl, '_blank');
-});
-
-document.getElementById('sellBtnMobile').addEventListener('click', (e) => {
-    e.preventDefault();
-    const whatsappUrl = generateWhatsAppLink('sell');
-    window.open(whatsappUrl, '_blank');
-});
-
-document.getElementById('chatBtnMobile').addEventListener('click', (e) => {
-    e.preventDefault();
-    const whatsappUrl = generateWhatsAppLink('chat');
-    window.open(whatsappUrl, '_blank');
-});
 
     </script>
 </body>
