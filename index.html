@@ -3153,12 +3153,7 @@
       }
       
     } catch (error) {
-      console.error("Error fetching products:", error);
-      if (allProducts.length === 0) {
-        showErrorMessage("Unable to load products. Please check your connection and refresh.");
-      } else {
-        showErrorMessage("Failed to update products. Showing cached data.");
-      }
+      
     }
     
     perfMonitor.endTiming('Firebase Load');
@@ -3270,7 +3265,7 @@
             <i class="fas ${category.icon} text-xl sm:text-2xl text-${category.color}-500 mr-3"></i>
             <h3 class="text-xl sm:text-2xl font-bold text-gray-800">${category.name}</h3>
           </div>
-          <a href="shop.html?category=${category.id}" class="text-blue-600 hover:text-blue-800 font-semibold">View All →</a>
+          <a href="dashboard.html?category=${category.id}" class="text-blue-600 hover:text-blue-800 font-semibold">View All →</a>
         </div>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4" id="${category.id}-products">
           <!-- Products will be added here -->
@@ -3741,7 +3736,7 @@
               </div>
               <h3 class="text-lg font-bold text-gray-800">${section.name}</h3>
             </div>
-            <a href="shop.html?section=${section.id}" class="text-blue-600 hover:text-blue-800 font-semibold">View All →</a>
+            <a href="dashboard.html?section=${section.id}" class="text-blue-600 hover:text-blue-800 font-semibold">View All →</a>
           </div>
           <div id="${section.id}-products" class="flex overflow-x-auto scrollbar-hide space-x-3 pb-2">
             <!-- Products will be added here -->
