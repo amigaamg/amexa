@@ -657,6 +657,87 @@
     </div>
   </div>
 </section>
+<!-- Amexan Horizontal Scrollable CTA Section -->
+<section class="cta-section">
+  <div class="cta-container">
+    <!-- Student Materials -->
+    <a href="student.html" class="cta-box">
+      <h3>📚 Student Resources</h3>
+      <p>Access exclusive medical guides, notes, and past papers instantly. Perfect for med school success!</p>
+    </a>
+
+    <!-- Special Packages -->
+    <a href="packages.html" class="cta-box">
+      <h3>🎁 Value Packages</h3>
+      <p>Get more, save more! Carefully curated bundles for students, interns, and medical professionals worldwide.</p>
+    </a>
+
+    <!-- Sourcing & Procurement -->
+    <a href="https://wa.me/254793666825?text=Hello%20Amexan,%20my%20name%20is%20[YourName].%20I%20am%20interested%20in%20sourcing%20and%20shipping%20medical%20supplies%20locally%20or%20abroad.%20Here%20is%20my%20list:%20[Add%20items].%20Please%20assist!" 
+       class="cta-box" target="_blank">
+      <h3>🚀 Sourcing & Shipping</h3>
+      <p>We handle local & international shipping for your medical supplies. Send your list and get fast, secure support!</p>
+    </a>
+  </div>
+</section>
+
+<!-- CSS -->
+<style>
+.cta-section {
+  padding: 15px 10px;
+  background: #f0f4f8;
+}
+
+.cta-container {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory; /* snap effect */
+  -webkit-overflow-scrolling: touch; /* smooth scroll on iOS */
+  padding-bottom: 5px;
+}
+
+.cta-box {
+  flex: 0 0 250px; /* fixed width for side-by-side scrolling */
+  scroll-snap-align: start; /* snap to each box */
+  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  color: #fff;
+  text-align: left;
+  padding: 12px 15px;
+  border-radius: 12px;
+  text-decoration: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  font-size: 0.88rem;
+  white-space: normal;
+}
+
+.cta-box h3 {
+  margin: 0 0 6px 0;
+  font-size: 1rem;
+}
+
+.cta-box p {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+.cta-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+/* Hide scrollbar but allow scrolling */
+.cta-container::-webkit-scrollbar {
+  display: none;
+}
+.cta-container {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style>
+
     
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
