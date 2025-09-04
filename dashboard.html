@@ -1098,16 +1098,9 @@
                 document.getElementById('productsLoader').classList.add('hidden');
                 document.getElementById('categoriesLoader').classList.add('hidden');
                 
-            } catch (error) {
-                console.error('Error initializing dashboard:', error);
-                showNotification('Error loading dashboard. Please refresh the page.', 'error');
-                
-                // Show error UI
-                document.getElementById('productsLoader').classList.add('hidden');
-                document.getElementById('categoriesLoader').classList.add('hidden');
-                document.getElementById('productsError').classList.remove('hidden');
+            } catch (error){}
             }
-        }
+        
 
         // Load user data from Firestore
         async function loadUserData() {
