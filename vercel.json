@@ -1,24 +1,29 @@
 {
   "rewrites": [
+    { "source": "/login", "destination": "/login.html" },
+    { "source": "/student", "destination": "/student.html" },
+    { "source": "/cart", "destination": "/cart.html" },
+    { "source": "/checkout", "destination": "/checkout.html" },
+    { "source": "/history", "destination": "/history.html" }
+  ],
+  "headers": [
     {
-      "source": "/login",
-      "destination": "/login.html"
+      "source": "/(.*)\\.(png|jpg|jpeg|gif|svg|webp|ico|avif)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "source": "/student",
-      "destination": "/student.html"
+      "source": "/(.*)\\.(css|js)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+      ]
     },
     {
-      "source": "/cart",
-      "destination": "/cart.html"
-    },
-    {
-      "source": "/checkout",
-      "destination": "/checkout.html"
-    },
-    {
-      "source": "/history",
-      "destination": "/history.html"
+      "source": "/(.*)\\.(html)",
+      "headers": [
+        { "key": "Cache-Control", "value": "public, max-age=0, must-revalidate" }
+      ]
     }
   ]
 }
